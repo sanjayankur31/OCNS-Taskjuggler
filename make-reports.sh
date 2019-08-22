@@ -5,14 +5,12 @@
 # File : make-reports.sh
 #
 
-git checkout master || exit -1
 
 rm -rf docs && mkdir docs
+tj3 ./src/CNS2020.tjp -o ./docs/ || exit -1
 
-tj3 ./src/CNS2020.tjp -o ./docs/
-
+git checkout master || exit -1
 git add .
 git commit -m "Regenerate" -S
 git push
-
 git checkout source
