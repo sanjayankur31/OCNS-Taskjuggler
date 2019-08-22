@@ -171,6 +171,12 @@ resource programme_committee "Programme committee" {
               }
             }
           }
+
+          /* Web content */
+          task website "Web content" {
+            depends !forms
+            /* TODO */
+          }
         }
       }
     }
