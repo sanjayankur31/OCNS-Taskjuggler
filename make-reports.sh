@@ -5,8 +5,16 @@
 # File : make-reports.sh
 #
 
+git checkout master || exit -1
+
 rm -rf docs && mkdir docs
 
 pushd docs
     tj3 ../src/CNS2020.tjp
 popd
+
+git add .
+git commit -m "Regenerate" -S
+git push
+
+git checkout source
