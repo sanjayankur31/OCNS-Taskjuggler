@@ -23,13 +23,17 @@ Journal entries to record events
 /* Project header */
 project CNS2020 "CNS2020" "1.0"
   2019-09-01 - 2020-09-01
-
-  scenario plan "Planned scenario" {
-    scenario actual "Actual scenario"
+{
+  scenario plan "Plan" {
+    scenario actual "Actual"
   }
+}
 
+/* Holidays/vacations */
+vacation "christmas" 2019-12-20 - 2020-01-15
 
 /* Macros */
+macro conference_end_date [ 2020-07-22 ]
 
 /* Flags */
 
@@ -40,9 +44,32 @@ project CNS2020 "CNS2020" "1.0"
 /* Accounts */
 
 /* Resources */
-  resource infra_team "Infrastructure Team" {
-    resource ankur "Ankur Sinha" 
+/* Infra */
+resource infra_team "Infrastructure team" {
+  resource ankur "Ankur Sinha" {
+    leaves holiday 2019-12-25 - 2020-01-15
   }
+}
+
+/* Workshops */
+resource workshop_team "Workshop team" {
+
+}
+
+/* Tutorials */
+resource tutorials_team "Tutorials team" {
+
+}
+
+/* Communications */
+resource communications_officer "Communications officer" {
+
+}
+
+/* Program committee */
+resource programme_committee "Programme committee" {
+
+}
 
 /* Tasks */
 /* Project Start */
@@ -52,11 +79,203 @@ project CNS2020 "CNS2020" "1.0"
     /* Planning */
     task plan "Planning phase" {
 
-      /* Access check */
-      task access_check "Access check" {
-        depends CNS2020
-        duration 1w
-        allocate ankur
+      /* Infrastructure */
+      task infra "Infrastructure" {
+        allocate infra_team
+
+        /* G-suite */
+        task g_suite "Google suite" {
+
+          /* Check everyone has credentials */
+          task credentials_check "Check that everyone has required credentials" {
+            start 2019-09-01
+            length 1w
+          }
+
+          /* Check all groups are up to date */
+          task groups_check "Check all group memberships" {
+            depends !credentials_check
+            length 1w
+          }
+        }
+
+        /* Memberclicks */
+        task memberclicks "Memberclicks" {
+          depends !g_suite
+
+          /* Check everyone has credentials */
+          task credentials_check "Check that everyone has required credentials" {
+            length 1w
+          }
+
+          /* Check everyone has access */
+          task access_check "Check that everyone has required access" {
+            depends !credentials_check
+            length 1w
+          }
+
+          /* All the forms */
+          task forms "Forms" {
+            depends !access_check
+
+            /* Check membership form */
+            task membership_form "Membership form" {
+              start 2019-12-01
+
+              /* Check that membership form is up to date */
+              task check_form "Check membership form" {
+                length 1w
+              }
+
+              /* Check and update if needed */
+              task check_pricing "Check membership rates" {
+                depends !check_form
+                length 1w
+              }
+            }
+            /* Prepare registration form */
+            task registration_form "Registration form" {
+
+              /* Copy over registration form */
+              task create_new "Create new registration form" {
+                depends !!membership_form
+                length 1w
+              }
+
+              /* Set up pricing */
+              task check_pricing "Set up date based pricing" {
+                length 1w
+                depends !create_new
+              }
+
+              /* Vouchers */
+              task vouchers "Discount voucher codes" {
+
+                /* Confirm what vouchers are needed */
+                task confirm_requirements "Confirm what vouchers are required" {
+                  length 1w
+                  depends !!check_pricing
+                }
+
+                task create_vouchers "Create the required voucher codes" {
+                  length 1w
+                  depends !confirm_requirements
+                }
+
+                /* Send codes to respective Board members */
+                task send_vouchers "Send voucher codes to respective Board members" {
+                  length 1w
+                  depends !create_vouchers
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /* Registration */
+    task registration "Registration phase" {
+      depends !plan.infra.memberclicks.forms
+      end ${conference_end_date}
+
+      task call "Call for registrations" {
+        depends CNS2020.plan.infra.memberclicks.forms.registration_form
+        milestone
+      }
+
+      task early_registration_non_memebers "Early registration for non members" {
+        end 2020-05-07
+      }
+
+      task early_registration_memebers "Early registration for members" {
+        end 2020-05-15
+      }
+    }
+
+    /* Memberships */
+    task memberships "Membership applications" {
+      depends !plan.infra.memberclicks.forms
+
+      task latest_safe_abstract "Latest safe date for application before abstract submission closes" {
+        start 2020-02-27
+        milestone
+      }
+
+      task latest_safe_members "Latest safe date for application before early registration for members closes" {
+        start 2020-05-09
+        milestone
+      }
+    }
+
+    /* Travel awards */
+    task travel_awards "Travel award applications" {
+      task submission_deadline "Submission deadline" {
+        start 2020-04-04
+        milestone
+      }
+    }
+
+    /* Abstract submission */
+    task abstracts "Abstract submissions" {
+      depends !plan.infra.memberclicks.forms
+
+      task confmaster_open "Open Confmaster for submissions" {
+        length 1w
+      }
+
+      task call "Call for submissions" {
+        depends !confmaster_open
+        milestone
+      }
+
+      task submissions_close "Abstract submissions close" {
+      end 2020-03-04
+      actual:end 2020-03-11
+      milestone
+      }
+
+      task acceptance_notifications "Acceptance notification" {
+        start 2020-04-10
+        milestone
+      }
+
+      task type_notification "Oral/Poster notifications" {
+        start 2020-05-01
+        milestone
+      }
+
+    }
+
+    /* Tutorials */
+    task tutorials "Tutorials" {
+      task submissions "Submissions" {
+
+        task call "Call for submissions" {
+          start 2019-12-15
+          milestone
+        }
+
+        task submissions_close "Submissions close" {
+          end 2020-01-31
+          milestone
+        }
+      }
+    }
+
+    /* Workshops */
+    task workshops "Workshops" {
+      task submissions "Submissions" {
+
+        task call "Call for submissions" {
+          start 2019-12-15
+          milestone
+        }
+
+        task submissions_close "Submissions close" {
+          end 2020-01-31
+          milestone
+        }
       }
     }
 
@@ -69,10 +288,19 @@ project CNS2020 "CNS2020" "1.0"
       }
 
       task conference_end "Conference ends" {
-        start 2020-07-22
+        start ${conference_end_date}
         milestone
       }
     }
   }
 
 /* Reports */
+taskreport overview "Overview" {
+  columns name, start, end, duration
+  formats html
+}
+
+taskreport overview_chart "Overview-chart" {
+  columns name, chart
+  formats html
+}
