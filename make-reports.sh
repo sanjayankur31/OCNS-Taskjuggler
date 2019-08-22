@@ -6,7 +6,7 @@
 #
 
 # Generate but store in a tmp directory
-rm -rf docs && mkdir docs
+rm -rf /tmp/tj3/ && mkdir /tmp/tj3/
 tj3 ./src/CNS2020.tjp -o /tmp/tj3/ || exit -1
 
 # Switch to branch, copy over
