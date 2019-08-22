@@ -235,6 +235,11 @@ resource programme_committee "Programme committee" {
       milestone
       }
 
+      task close_confmaster "Close new submissions on confmaster" {
+        depends !submissions_close
+        milestone
+      }
+
       task acceptance_notifications "Acceptance notification" {
         start 2020-04-10
         milestone
