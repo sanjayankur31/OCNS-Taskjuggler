@@ -22,11 +22,12 @@ Journal entries to record events
 
 /* Project header */
 project CNS2020 "CNS2020" "1.0"
-  2019-09-01 - 2020-09-01
+  2019-09-01-0:00-+0100 +1y
 {
   scenario plan "Plan" {
     scenario actual "Actual"
   }
+  timezone "Europe/London"
 }
 
 /* Holidays/vacations */
