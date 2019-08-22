@@ -10,6 +10,8 @@ rm -rf docs && mkdir docs
 tj3 ./src/CNS2020.tjp -o ./docs/ || exit -1
 
 git checkout master || exit -1
+lash docs
+
 git add .
 git commit -m "Regenerate" -S
 git push
