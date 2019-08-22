@@ -1,0 +1,78 @@
+/*
+General comments
+
+There are three ways of specifying durations
+- duration: calendar time
+- length: working time
+- effort: resource time
+Must be used with a unit: min, h, d, w, m, y
+
+Conversion factors:
+- yearlyworkingdays
+- dailyworkinghours
+
+
+Notes and statusnotes
+- add: note "..."
+- add: statusnote "..."
+
+Journal entries to record events
+- add: journalentry 2019-10-10 "..."
+*/
+
+/* Project header */
+project CNS2020 "CNS2020" "1.0"
+  2019-09-01 - 2020-09-01
+
+  scenario plan "Planned scenario" {
+    scenario actual "Actual scenario"
+  }
+
+
+/* Macros */
+
+/* Flags */
+
+
+
+/* Shifts */
+
+/* Accounts */
+
+/* Resources */
+  resource infra_team "Infrastructure Team" {
+    resource ankur "Ankur Sinha" 
+  }
+
+/* Tasks */
+/* Project Start */
+  task CNS2020 "CNS 2020" {
+    start 2019-09-01
+
+    /* Planning */
+    task plan "Planning phase" {
+
+      /* Access check */
+      task access_check "Access check" {
+        depends CNS2020
+        duration 1w
+        allocate ankur
+      }
+    }
+
+    /* Conference */
+    task conference "Conference"
+    {
+      task conference_start "Conference starts" {
+        start 2020-07-18
+        milestone
+      }
+
+      task conference_end "Conference ends" {
+        start 2020-07-22
+        milestone
+      }
+    }
+  }
+
+/* Reports */
