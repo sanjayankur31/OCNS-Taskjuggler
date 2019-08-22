@@ -5,13 +5,16 @@
 # File : make-reports.sh
 #
 
-
+# Generate but store in a tmp directory
 rm -rf docs && mkdir docs
-tj3 ./src/CNS2020.tjp -o ./docs/ || exit -1
+tj3 ./src/CNS2020.tjp -o /tmp/tj3/ || exit -1
 
+# Switch to branch, copy over
 git checkout master || exit -1
-ls -lash ./docs
+rm -rf docs && mkdir docs
+cp -vr /tmp/tj3/* ./docs/
 
+# commit
 git add .
 git commit -m "Regenerate" -S
 git push
