@@ -5,7 +5,7 @@
 # File : make-reports.sh
 #
 
-mkdir docs
+rm -rf docs && mkdir docs
 
 pushd docs
     tj3 ../src/CNS2020.tjp

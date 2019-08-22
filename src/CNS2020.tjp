@@ -294,13 +294,13 @@ resource programme_committee "Programme committee" {
     }
   }
 
-/* Reports */
-taskreport overview "Overview" {
+/* Reports: detaulf */
+taskreport overview "index" {
   columns name, start, end, duration
   formats html
 }
 
-taskreport overview_chart "Overview-chart" {
+taskreport chart "chart" {
   columns name, chart
   formats html
 }
