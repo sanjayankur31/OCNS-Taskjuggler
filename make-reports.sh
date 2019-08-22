@@ -9,9 +9,7 @@ git checkout master || exit -1
 
 rm -rf docs && mkdir docs
 
-pushd docs
-    tj3 ../src/CNS2020.tjp
-popd
+tj3 ./src/CNS2020.tjp -o ./docs/
 
 git add .
 git commit -m "Regenerate" -S
