@@ -22,18 +22,24 @@ Journal entries to record events
 
 /* Project header */
 project CNS2020 "CNS2020" "0.1"
-2019-09-01-0:00-+0100 +1y
+2019-09-01-0:00-+0100 +13m
 {
+  timezone "Europe/London"
+
+  # Since the conference includes weekend, set this for allocation
+  # Not that we use allocations
+  workinghours mon - sun 9:00 - 17:00
+
   scenario plan "Plan" {
     scenario actual "Actual"
   }
-  timezone "Europe/London"
 }
 
 /* Holidays/vacations */
 vacation "christmas" 2019-12-20 - 2020-01-15
 
 /* Macros */
+macro conference_start_date [ 2020-07-18 ]
 macro conference_end_date [ 2020-07-22 ]
 
 /* Flags */
@@ -84,6 +90,10 @@ resource travel_chair "Travel chair" {
 
 }
 
+resource board "OCNS Board" {
+
+}
+
 
 /* Tasks */
 /* Project Start */
@@ -108,7 +118,9 @@ task CNS2020 "CNS 2020" {
         depends !credentials_check
         length 1w
       }
+
     }
+
 
     /* Memberclicks */
     task memberclicks "Memberclicks" {
@@ -200,6 +212,15 @@ task CNS2020 "CNS 2020" {
       }
     }
 
+    /* Other forms */
+    task other_infra "Other" {
+      depends !memberclicks
+      /* set up poster upload form */
+      task poster_gallery_form "Set up poster gallery submission form" {
+        length 1w
+      }
+    }
+
     /* Confmaster */
     task confmaster "Confmaster" {
       allocate programme_chair
@@ -213,6 +234,20 @@ task CNS2020 "CNS 2020" {
         duration 1w
       }
 
+        /* Open confmaster for submissions */
+        task confmaster_open "Open Confmaster for submissions" {
+          depends !confmaster_freeze
+          length 1d
+        }
+
+        /* Close confmaster */
+        task close_confmaster "Close Confmaster for submissions" {
+          depends CNS2020.conference.abstracts.submissions
+          effort 1d
+          allocate programme_chair
+        }
+
+
     }
   }
     /* Conference tasks */
@@ -225,14 +260,16 @@ task CNS2020 "CNS 2020" {
 
         task call "Call for registrations" {
           allocate communications_officer
-          effort 1d
+          effort 0.5d
         }
 
         task early_registration_non_memebers "Early registration for non members" {
+          depends !call
           end 2020-05-07
         }
 
         task early_registration_memebers "Early registration for members" {
+          depends !call
           end 2020-05-15
         }
       }
@@ -241,7 +278,7 @@ task CNS2020 "CNS 2020" {
       task travel_awards "Travel award applications" {
         task submission_deadline "Submission deadline" {
           end 2020-04-04
-          milestone
+          duration 1d
           flags conference_calendar
         }
       }
@@ -250,84 +287,62 @@ task CNS2020 "CNS 2020" {
       task abstracts "Abstract submissions" {
         depends !!infra.memberclicks.forms.registration_form
 
-        /* Open confmaster for submissions */
-        task confmaster_open "Open Confmaster for submissions" {
-          length 1w
-        }
-
         task call "Call for submissions" {
-          depends !confmaster_open
+          depends CNS2020.infra.confmaster.confmaster_open
           allocate communications_officer
-          effort 1d
+          effort 0.5d
           flags conference_calendar
         }
 
-
-        task submissions_close "Abstract submissions close" {
-        end 2020-03-04
-        actual:end 2020-03-11
-        flags conference_calendar
-        milestone
+        task submissions "Abstract submissions period" {
+          depends !call
+          end 2020-03-04
+          actual:end 2020-03-11
+          flags conference_calendar
         }
 
-        /* Close confmaster */
-        task close_confmaster "Close new submissions on confmaster" {
-          depends !submissions_close
-          effort 1d
-          allocate programme_chair
-        }
-
-        task acceptance_notification "Send out acceptance notification" {
+        task acceptance_notification "Notification of abstract acceptance" {
           start 2020-04-10
           effort 1d
           allocate programme_chair
           flags conference_calendar
         }
 
-        task acceptance_notification_milestone "Notification of abstract acceptance" {
-          depends !acceptance_notification
-          milestone
-        }
-
-        task type_notification "Send out Oral/Poster notifications" {
+        task type_notification "Notification of Oral/Poster presentation" {
           start 2020-05-01
           effort 1d
           allocate programme_chair
           flags conference_calendar
         }
-
-        task type_notification_milestone "Notification of presentation type" {
-          depends !type_notification
-          milestone
-        }
-
       }
 
       /* Tutorials */
       task tutorials "Tutorials" {
+        start 2019-12-15
+
         task call "Call for submissions" {
-          start 2019-12-15
           allocate communications_officer
-          effort 1d
+          effort 0.5d
         }
 
-        task submissions_close "Submissions close" {
+        task submissions "Submission period" {
+          depends !call
           end 2020-01-31
-          milestone
         }
       }
 
       /* Workshops */
       task workshops "Workshops" {
+        start 2019-12-15
+
         task call "Call for submissions" {
-          start 2019-12-15
           allocate communications_officer
-          effort 1d
+          effort 0.5d
         }
 
-        task submissions_close "Submissions close" {
+        task submissions "Submission period" {
+          depends !call
           end 2020-01-31
-          milestone
         }
       }
 
@@ -344,17 +359,78 @@ task CNS2020 "CNS 2020" {
         flags conference_calendar
       }
 
-      task conference_start "Conference starts" {
-        start 2020-07-18
-        milestone
+      /* Conference survey */
+      task conference_survey "Conference survey" {
+
+        /* Call for submissions */
+        task call "Call for submissions" {
+          start ${conference_end_date}
+          allocate communications_officer
+          effort 0.5d
+        }
+
+        /* Submission period */
+        task survey_submissions "Poster submission period" {
+          depends !call
+          end 2020-09-07
+        }
+
       }
 
-      task conference_end "Conference ends" {
-        start ${conference_end_date}
-        milestone
+
+      /* Poster submissions */
+      task poster_gallery "Poster gallery" {
+
+        /* Call for submissions */
+        task call "Call for submissions" {
+          start ${conference_end_date}
+          allocate communications_officer
+          effort 0.5d
+        }
+
+        /* Submission period */
+        task poster_submissions "Poster submission period" {
+          depends !call
+          end 2020-09-07
+        }
+
+        /* Set up gallery */
+        task poster_gallery_setup "Process submissions" {
+          allocate webmaster
+          depends !poster_submissions
+          duration 1w
+        }
+      }
+
+      /* Conference */
+      task Conference "Conference" {
+        start ${conference_start_date}
+
+        task board_meeting "Board meeting" {
+          start ${conference_start_date}
+          duration 1d
+          allocate board
+        }
+
+        task tutorials "Tutorials" {
+          start ${conference_start_date}
+          duration 1d
+        }
+
+        task main_meeting "Main meeting" {
+          depends !tutorials
+          duration 3d
+        }
+
+        task workshops "Workshops" {
+          end ${conference_end_date}
+          duration 1.5d
+        }
       }
     }
+
   }
+
 
 /* Reports: detaulf */
 taskreport overview "index" {
@@ -374,5 +450,4 @@ taskreport conference_calendar "Conference calendar" {
 }
 
 icalreport conference_milestons_ical "CNS2020" {
-  hidetask(~ismilestone(plan))
 }
