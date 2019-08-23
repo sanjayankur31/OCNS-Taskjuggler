@@ -90,7 +90,13 @@ resource travel_chair "Travel chair" {
 
 }
 
+/* The OCNS Board */
 resource board "OCNS Board" {
+
+}
+
+/* Social media manager */
+resource social_manager "Social media manager" {
 
 }
 
