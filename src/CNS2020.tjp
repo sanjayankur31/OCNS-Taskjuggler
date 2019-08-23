@@ -205,12 +205,12 @@ task CNS2020 "CNS 2020" {
       allocate programme_chair
 
       task check_confmaster "Check confmaster" {
-        duration 4w
+        duration 3w
       }
 
       task confmaster_freeze "Freeze confmaster deployment" {
         depends !check_confmaster
-        milestone
+        duration 1w
       }
 
     }
@@ -277,11 +277,16 @@ task CNS2020 "CNS 2020" {
           allocate programme_chair
         }
 
-        task acceptance_notifications "Send out acceptance notification" {
+        task acceptance_notification "Send out acceptance notification" {
           start 2020-04-10
           effort 1d
           allocate programme_chair
           flags conference_calendar
+        }
+
+        task acceptance_notification_milestone "Notification of abstract acceptance" {
+          depends !acceptance_notification
+          milestone
         }
 
         task type_notification "Send out Oral/Poster notifications" {
@@ -289,6 +294,11 @@ task CNS2020 "CNS 2020" {
           effort 1d
           allocate programme_chair
           flags conference_calendar
+        }
+
+        task type_notification_milestone "Notification of presentation type" {
+          depends !type_notification
+          milestone
         }
 
       }
@@ -361,4 +371,8 @@ taskreport conference_calendar "Conference calendar" {
   columns name, start, end
   formats html
   flags conference_calendar
+}
+
+icalreport conference_milestons_ical "CNS2020" {
+  hidetask(~ismilestone(plan))
 }
