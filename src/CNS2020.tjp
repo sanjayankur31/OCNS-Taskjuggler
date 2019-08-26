@@ -22,7 +22,7 @@ Journal entries to record events
 
 /* Project header */
 project OCNS2020 "OCNS2020" "0.1"
-2019-09-01-0:00-+0100 +13m
+2019-08-01-0:00-+0100 - 2020-10-31-0:00-+0100
 {
   timezone "Europe/London"
 
@@ -33,6 +33,8 @@ project OCNS2020 "OCNS2020" "0.1"
   scenario plan "Plan" {
     scenario actual "Actual"
   }
+
+  timingresolution 60 min
 }
 
 /* Holidays/vacations */
@@ -46,6 +48,8 @@ macro conference_end_date [ 2020-07-22 ]
 
 /* Stuff that needs to be included in the user calendar report */
 flags conference_calendar
+/* elections */
+flags elections
 
 /* Shifts */
 
@@ -100,6 +104,19 @@ resource social_manager "Social media manager" {
 
 }
 
+resource nomination_committee "Nomination committee" {
+
+}
+
+/* members */
+resource members "OCNS members" {
+
+}
+
+/* non member users */
+resource users "All users" {
+
+}
 
 /* Tasks */
 /* Project Start */
@@ -107,22 +124,158 @@ task OCNS2020 "OCNS 2020" {
   start 2019-09-01
 
   /* Infrastructure */
-  task infra "Infrastructure setup" {
-    allocate webmaster
+  task orgtasks "Organisation tasks" {
+
+    /* Director elections */
+    task director_elections "Director elections" {
+      flags elections
+      start 2019-08-25
+
+      task prepare_form "Copy over candidancy form" {
+        allocate webmaster
+        effort 1d
+      }
+      task call "Call for candidate directors" {
+        allocate communications_officer
+        effort 0.5d
+        start 2019-09-01
+      }
+
+      task reminder "Reminder call for candidate directors" {
+        allocate communications_officer
+        effort 0.5d
+        start 2019-09-14
+      }
+
+      task nomination_period "Nomination period" {
+        allocate members
+        start 2019-09-01
+        end 2019-10-01
+      }
+
+      task setup_director_candidate_pages "Set up director candidate pages" {
+        allocate webmaster
+        effort 2w
+        depends !nomination_period
+      }
+
+      task membership_reminder "E-mail reminder of membership requirement for voting rights" {
+        allocate communications_officer
+        start 2019-08-10
+        effort 0.5d
+      }
+
+      task prepare_voting_form "Prepare voting form" {
+        allocate webmaster
+        effort 2d
+      }
+
+      task open_voting_form "Open voting form" {
+        allocate webmaster
+        effort 1h
+        start 2019-10-17
+      }
+
+      task voting_call "Send out call for voting" {
+        allocate communications_officer
+        effort 0.5d
+        depends !open_voting_form
+      }
+
+      task voting_period "Voting period" {
+        allocate members
+        depends !open_voting_form
+        end 2019-11-18
+      }
+
+      task election_reminder_1 "Send out first reminder" {
+        allocate communications_officer
+        start 2019-10-24
+        effort 0.5d
+      }
+
+      task election_reminder_2 "Send out second reminder" {
+        allocate communications_officer
+        start 2019-10-31
+        effort 0.5d
+      }
+
+      task analyse_votes "Analyse votes" {
+        allocate webmaster
+        depends !voting_period
+        effort 1w
+      }
+
+      /* Only nomination committee sees detailed results. Everyone else only sees winners */
+      task send_results "Send results to Nomination committee" {
+        allocate webmaster
+        depends !analyse_votes
+        effort 1h
+      }
+
+      task verify_results "Verify results" {
+        allocate nomination_committee
+        effort 1w
+        depends !send_results
+      }
+
+      task contact_winners "Contact winners to confirm acceptance of position" {
+        allocate communications_officer
+        depends !verify_results
+        effort 1h
+      }
+      task contact_non_winners "Contact non-winners" {
+        allocate communications_officer
+        depends !verify_results
+        effort 1h
+      }
+
+      task inform_board "Inform the Board" {
+        allocate communications_officer
+        depends !contact_winners
+        effort 1h
+      }
+
+      task allocate_roles "Allocate roles to new directors" {
+        allocate board
+        depends !inform_board
+        effort 2w
+      }
+
+      /* Delete so that all votes are deleted */
+      task delete_form "Copy and delete election form" {
+        allocate webmaster
+        effort 2h
+        depends !inform_board
+      }
+
+      task announce_results_web "Announce results on home and landing pages" {
+        allocate webmaster
+        effort 3d
+        depends !inform_board
+      }
+
+      task announce_results "Announce results to members" {
+        allocate communications_officer
+        effort 1d
+        depends !inform_board
+      }
+    }
 
     /* G-suite */
     task g_suite "Google suite" {
+      allocate webmaster
+      depends !director_elections
 
       /* Check everyone has credentials */
       task credentials_check "Check that everyone has required credentials" {
-        start 2019-09-01
-        length 1w
+        effort 1w
       }
 
       /* Check all groups are up to date */
       task groups_check "Check all group memberships" {
         depends !credentials_check
-        length 1w
+        effort 1w
       }
 
     }
@@ -130,23 +283,24 @@ task OCNS2020 "OCNS 2020" {
 
     /* Memberclicks */
     task memberclicks "Memberclicks" {
-      depends !g_suite
+      allocate webmaster
 
       /* Check everyone has credentials */
       task credentials_check "Check that everyone has required credentials" {
-        length 1w
+        depends !!director_elections
+        effort 2d
       }
 
       /* Check everyone has access */
       task access_check "Check that everyone has required access" {
         depends !credentials_check
-        effort 1w
+        effort 2d
       }
 
       /* Check mailing lists */
       task mailing_list_check "Check that the mailing lists are up to date" {
         depends !access_check
-        effort 1w
+        effort 2d
       }
 
       /* Copy over web content */
@@ -161,7 +315,6 @@ task OCNS2020 "OCNS 2020" {
 
       /* All the forms */
       task forms "Forms" {
-        depends !mailing_list_check
 
         /* Check membership form */
         task membership_form "Membership form" {
@@ -244,6 +397,13 @@ task OCNS2020 "OCNS 2020" {
         }
       }
 
+      /* Membership tasks */
+      /* Is this needed? Should speak to Memberclicks about this */
+      task update_expiration "Update expiration dates" {
+        start 2019-12-01
+        effort 1w
+        priority 800
+      }
     }
 
     /* Other forms */
@@ -289,7 +449,7 @@ task OCNS2020 "OCNS 2020" {
     {
       /* Registration */
       task registration "Registrations" {
-        depends OCNS2020.infra.memberclicks.forms.registration_form
+        depends OCNS2020.orgtasks.memberclicks.forms.registration_form
         flags conference_calendar
 
         task call "Call for registrations" {
@@ -319,10 +479,10 @@ task OCNS2020 "OCNS 2020" {
 
       /* Abstract submission */
       task abstracts "Abstract submissions" {
-        depends !!infra.memberclicks.forms.registration_form
+        depends !!orgtasks.memberclicks.forms.registration_form
 
         task call "Call for submissions" {
-          depends OCNS2020.infra.confmaster.confmaster_open
+          depends OCNS2020.orgtasks.confmaster.confmaster_open
           allocate communications_officer
           effort 0.5d
           flags conference_calendar
@@ -442,7 +602,7 @@ task OCNS2020 "OCNS 2020" {
 
         task board_meeting "Board meeting" {
           start ${conference_start_date}
-          duration 1d
+          effort 1d
           allocate board
         }
 
@@ -477,11 +637,34 @@ taskreport chart "chart" {
   formats html
 }
 
+resourcereport resources "resources" {
+  columns name, start, end, duration
+  hidetask @none
+  sortresources tree
+  formats html
+}
+
+icalreport calendar "CNS2020" {
+}
+
+/* Elections */
+taskreport elections "elections" {
+  columns name, start, end, duration
+  formats html
+  hidetask ~elections
+}
+
+resourcereport elections_resources "elections_resources" {
+  columns name, start, end, duration
+  hidetask ~elections
+  sortresources tree
+  formats html
+}
+
+/* Conference */
 taskreport conference_calendar "Conference calendar" {
   columns name, start, end
   formats html
   flags conference_calendar
 }
 
-icalreport conference_milestons_ical "CNS2020" {
-}
