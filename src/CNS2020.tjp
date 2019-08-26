@@ -271,8 +271,8 @@ task OCNS2020 "OCNS 2020" {
     start 2019-09-01
 
 
-    /* Prep */
-    task prep "Preparation" {
+    /* Before the conference */
+    task pre_conference "Pre-conference" {
 
       /* G-suite */
       task g_suite "Google suite" {
@@ -428,13 +428,11 @@ task OCNS2020 "OCNS 2020" {
         }
       }
 
-      /* Other forms */
-      task other_infra "Other" {
-        depends !memberclicks
-        /* set up poster upload form */
-        task poster_gallery_form "Set up poster gallery submission form" {
-          length 1w
-        }
+      /* Set up poster upload form */
+      task poster_gallery_form "Set up poster gallery submission form" {
+        effort 1w
+        allocate webmaster
+        priority 100
       }
 
       /* Confmaster */
@@ -457,7 +455,7 @@ task OCNS2020 "OCNS 2020" {
 
       /* Registration */
       task registration "Registrations" {
-        depends OCNS2020.conference_tasks.prep.memberclicks.forms.registration_form
+        depends OCNS2020.conference_tasks.pre_conference.memberclicks.forms.registration_form
         flags conference_calendar
 
         task call "Call for registrations" {
@@ -487,7 +485,7 @@ task OCNS2020 "OCNS 2020" {
 
       /* Abstract submission */
       task abstracts "Abstract submissions" {
-        depends OCNS2020.conference_tasks.prep.memberclicks.forms.registration_form
+        depends OCNS2020.conference_tasks.pre_conference.memberclicks.forms.registration_form
 
         /* Open confmaster for submissions */
         task confmaster_open "Open Confmaster for submissions" {
@@ -575,51 +573,10 @@ task OCNS2020 "OCNS 2020" {
         flags conference_calendar
       }
 
-      /* Conference survey */
-      task conference_survey "Conference survey" {
 
-        /* Call for submissions */
-        task call "Call for submissions" {
-          start ${conference_end_date}
-          allocate communications_officer
-          effort 0.5d
-        }
-
-        /* Submission period */
-        task survey_submissions "Poster submission period" {
-          depends !call
-          end 2020-09-07
-        }
-
-      }
-
-
-      /* Poster submissions */
-      task poster_gallery "Poster gallery" {
-
-        /* Call for submissions */
-        task call "Call for submissions" {
-          start ${conference_end_date}
-          allocate communications_officer
-          effort 0.5d
-        }
-
-        /* Submission period */
-        task poster_submissions "Poster submission period" {
-          depends !call
-          end 2020-09-07
-        }
-
-        /* Set up gallery */
-        task poster_gallery_setup "Process submissions" {
-          allocate webmaster
-          depends !poster_submissions
-          duration 1w
-        }
-      }
 
       /* Conference */
-      task Conference "Conference" {
+      task Conference "Conference: Melbourne" {
         start ${conference_start_date}
 
         task board_meeting "Board meeting" {
@@ -644,8 +601,52 @@ task OCNS2020 "OCNS 2020" {
         }
       }
     }
+    /* Post conference */
+    task post_conference "Post-conference" {
 
-  }}
+      /* Conference survey */
+      task conference_survey "Conference survey" {
+
+        /* Call for submissions */
+        task call "Call for submissions" {
+          start ${conference_end_date}
+          allocate communications_officer
+          effort 0.5d
+        }
+
+        /* Submission period */
+        task survey_submissions "Poster submission period" {
+          depends !call
+          end 2020-09-07
+        }
+      }
+
+      /* Poster submissions */
+      task poster_gallery "Poster gallery" {
+
+        /* Call for submissions */
+        task call "Call for submissions" {
+          start ${conference_end_date}
+          allocate communications_officer
+          effort 0.5d
+        }
+
+        /* Submission period */
+        task poster_submissions "Poster submission period" {
+          depends !call
+          end 2020-09-07
+        }
+
+        /* Set up gallery */
+        task poster_gallery_setup "Process submissions" {
+          allocate webmaster
+          depends !poster_submissions
+          duration 1w
+        }
+      }
+    }
+  }
+}
 
 
 /* Reports: detaulf */
