@@ -315,8 +315,14 @@ task OCNS2020 "OCNS 2020" {
 
         /* Copy over web content */
         task copy_pages "Copy over all 2019 pages to 2020" {
-          effort 2w
+          effort 1w
           depends !mailing_list_check
+        }
+
+        /* Update menu links */
+        task update_menu_links "Update links in main menu" {
+          effort 3d
+          depends !copy_pages
         }
 
         /* Also remove permissions from old pages: archived */
