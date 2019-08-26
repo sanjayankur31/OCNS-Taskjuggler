@@ -14,7 +14,9 @@ git checkout master || exit -1
 rm -rf docs && mkdir docs
 cp -vr /tmp/tj3/* ./docs/
 # Create an index.html
-ln -s ./docs/"Overview - by tasks.html" ./docs/index.html
+pushd docs
+    ln -fvs ./"Overview - by tasks.html" ./index.html
+popd
 
 # commit
 git add .
