@@ -21,7 +21,7 @@ Journal entries to record events
  */
 
 /* Project header */
-project CNS2020 "CNS2020" "0.1"
+project OCNS2020 "OCNS2020" "0.1"
 2019-09-01-0:00-+0100 +13m
 {
   timezone "Europe/London"
@@ -103,7 +103,7 @@ resource social_manager "Social media manager" {
 
 /* Tasks */
 /* Project Start */
-task CNS2020 "CNS 2020" {
+task OCNS2020 "OCNS 2020" {
   start 2019-09-01
 
   /* Infrastructure */
@@ -140,12 +140,28 @@ task CNS2020 "CNS 2020" {
       /* Check everyone has access */
       task access_check "Check that everyone has required access" {
         depends !credentials_check
-        length 1w
+        effort 1w
+      }
+
+      /* Check mailing lists */
+      task mailing_list_check "Check that the mailing lists are up to date" {
+        depends !access_check
+        effort 1w
+      }
+
+      /* Copy over web content */
+      task copy_pages "Copy over all 2019 pages to 2020" {
+        effort 2w
+        depends !mailing_list_check
+      }
+      task update_board_pages "Update Board/Committee pages and archive old ones" {
+        effort 1w
+        depends !copy_pages
       }
 
       /* All the forms */
       task forms "Forms" {
-        depends !access_check
+        depends !mailing_list_check
 
         /* Check membership form */
         task membership_form "Membership form" {
@@ -167,55 +183,67 @@ task CNS2020 "CNS 2020" {
         task registration_form "Registration form" {
 
           /* Copy over registration form */
-          task create_new "Create new registration form" {
+          task copy_over "Copy over form" {
             depends !!membership_form.check_pricing
-            length 1w
+            effort 2d
           }
-
           /* Set up pricing */
           task check_pricing "Set up date based pricing" {
+            effort 2d
+            depends !copy_over
+          }
+        }
+
+        /* Add to registration form */
+        task add_to_registration_form "Add to registration form" {
+          /* Copy over registration form */
+          task copy_over "Copy over form" {
+            depends !!membership_form.check_pricing
+            effort 2d
+          }
+          /* Set up pricing */
+          task check_pricing "Set up date based pricing" {
+            effort 2d
+            depends !copy_over
+          }
+        }
+
+        /* Add extras form */
+        task add_extras_form "Add extras form" {
+          /* Copy over registration form */
+          task copy_over "Copy over form" {
+            depends !!membership_form.check_pricing
+            effort 2d
+          }
+          /* Set up pricing */
+          task check_pricing "Set up date based pricing" {
+            effort 2d
+            depends !copy_over
+          }
+        }
+
+        /* Vouchers */
+        task vouchers "Discount voucher codes" {
+
+          /* Confirm what vouchers are needed */
+          task confirm_requirements "Confirm what vouchers are required" {
             length 1w
-            depends !create_new
+            depends !!add_extras_form
           }
 
-          /* Vouchers */
-          task vouchers "Discount voucher codes" {
+          task create_vouchers "Create the required voucher codes" {
+            length 1w
+            depends !confirm_requirements
+          }
 
-            /* Confirm what vouchers are needed */
-            task confirm_requirements "Confirm what vouchers are required" {
-              length 1w
-              depends !!check_pricing
-            }
-
-            task create_vouchers "Create the required voucher codes" {
-              length 1w
-              depends !confirm_requirements
-            }
-
-            /* Send codes to respective Board members */
-            task send_vouchers "Send voucher codes to respective Board members" {
-              length 1w
-              depends !create_vouchers
-            }
+          /* Send codes to respective Board members */
+          task send_vouchers "Send voucher codes to respective Board members" {
+            length 1w
+            depends !create_vouchers
           }
         }
       }
 
-      /* Web content */
-      task website "Web content" {
-        depends !access_check
-
-        /* Front page */
-        task update_frontpage "Update front page" {
-          length 1w
-        }
-
-        /* Templates */
-        task setup_templates "Set up templates" {
-          depends !update_frontpage
-          length 2w
-        }
-      }
     }
 
     /* Other forms */
@@ -248,7 +276,7 @@ task CNS2020 "CNS 2020" {
 
         /* Close confmaster */
         task close_confmaster "Close Confmaster for submissions" {
-          depends CNS2020.conference.abstracts.submissions
+          depends OCNS2020.conference.abstracts.submissions
           effort 1d
           allocate programme_chair
         }
@@ -261,7 +289,7 @@ task CNS2020 "CNS 2020" {
     {
       /* Registration */
       task registration "Registrations" {
-        depends CNS2020.infra.memberclicks.forms.registration_form
+        depends OCNS2020.infra.memberclicks.forms.registration_form
         flags conference_calendar
 
         task call "Call for registrations" {
@@ -294,7 +322,7 @@ task CNS2020 "CNS 2020" {
         depends !!infra.memberclicks.forms.registration_form
 
         task call "Call for submissions" {
-          depends CNS2020.infra.confmaster.confmaster_open
+          depends OCNS2020.infra.confmaster.confmaster_open
           allocate communications_officer
           effort 0.5d
           flags conference_calendar
