@@ -499,13 +499,11 @@ task OCNS2020 "OCNS 2020" {
         task latest_safe_abstract "Latest safe date for membership before abstract submission ends" {
           start 2020-02-27
           milestone
-          flags conference_calendar
         }
 
         task latest_safe_members "Latest safe date for membership before early registration for members ends" {
           start 2020-05-09
           milestone
-          flags conference_calendar
         }
       }
 
@@ -600,6 +598,7 @@ task OCNS2020 "OCNS 2020" {
       /* Conference */
       task Conference "Conference: Melbourne" {
         start ${conference_start_date}
+        flags conference_calendar
 
         task board_meeting "Board meeting" {
           start ${conference_start_date}
@@ -712,6 +711,6 @@ resourcereport elections_resources "elections_resources" {
 taskreport conference_calendar "Conference calendar" {
   columns name, start, end
   formats html
-  flags conference_calendar
+  hidetask ~conference_calendar
 }
 
