@@ -677,46 +677,101 @@ task OCNS2020 "OCNS 2020" {
   }
 }
 
+/* Reports: navbar */
+navigator navbar {
+  hidereport @none
+}
 
-/* Reports: detaulf */
-taskreport overview "index" {
+/* Default report that includes all the reports in it */
+textreport frame "" {
+  header -8<-
+  == OCNS 2019-2020 ==
+  <[navigator id="navbar"]>
+  ->8-
+  footer "----"
+  textreport index "Overview - by tasks" {
+    formats html
+    center '<[report id="overview"]>'
+  }
+
+  textreport "Overview - with chart" {
+    formats html
+    center '<[report id="chart"]>'
+  }
+
+  textreport "Overview - by resources" {
+    formats html
+    center '<[report id="resources"]>'
+  }
+
+  textreport "Elections - by task" {
+    formats html
+    center '<[report id="elections"]>'
+  }
+
+  textreport "Elections - by resources" {
+    formats html
+    center '<[report id="elections_resources"]>'
+  }
+
+  textreport "Conference calendar" {
+    formats html
+    center '<[report id="conference_calendar"]>'
+  }
+}
+
+taskreport overview "" {
+  header -8<-
+  An ical of the whole plan is available [CNS2020.ics here].
+  ->8-
   columns bsi {title 'WBS'}, name, start, end, duration
-  formats html
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
 }
 
-taskreport chart "chart" {
+taskreport chart "" {
   columns name, chart
-  formats html
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
 }
 
-resourcereport resources "resources" {
+resourcereport resources "" {
   columns name, start, end, duration
   hidetask @none
   sortresources tree
-  formats html
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
 }
 
 icalreport calendar "CNS2020" {
 }
 
 /* Elections */
-taskreport elections "elections" {
+taskreport elections "" {
   columns name, start, end, duration
-  formats html
   hidetask ~elections
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
 }
 
-resourcereport elections_resources "elections_resources" {
+resourcereport elections_resources "" {
   columns name, start, end, duration
   hidetask ~elections
   sortresources tree
-  formats html
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
 }
 
 /* Conference */
-taskreport conference_calendar "Conference calendar" {
+taskreport conference_calendar "" {
   columns name, start, end
-  formats html
   hidetask ~conference_calendar
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
 }
-

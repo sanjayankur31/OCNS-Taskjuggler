@@ -13,6 +13,8 @@ tj3 ./src/CNS2020.tjp -o /tmp/tj3/ || exit -1
 git checkout master || exit -1
 rm -rf docs && mkdir docs
 cp -vr /tmp/tj3/* ./docs/
+# Create an index.html
+ln -s ./docs/"Overview - by tasks.html" ./docs/index.html
 
 # commit
 git add .
