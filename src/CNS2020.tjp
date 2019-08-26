@@ -104,7 +104,13 @@ resource social_manager "Social media manager" {
 
 }
 
+/* Nomination committee */
 resource nomination_committee "Nomination committee" {
+
+}
+
+/* Treasurer */
+resource treasurer "OCNS treasurer" {
 
 }
 
