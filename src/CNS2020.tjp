@@ -704,6 +704,11 @@ textreport frame "" {
     center '<[report id="resources"]>'
   }
 
+  textreport "Webmaster tasks" {
+    formats html
+    center '<[report id="webmaster"]>'
+  }
+
   textreport "Elections - by task" {
     formats html
     center '<[report id="elections"]>'
@@ -741,6 +746,15 @@ resourcereport resources "" {
   columns name, start, end, duration
   hidetask @none
   sortresources tree
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  caption 'All duration values are in man days.'
+}
+
+taskreport webmaster "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(webmaster, plan)
+  hideresource ~isdutyof(webmaster, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   caption 'All duration values are in man days.'
