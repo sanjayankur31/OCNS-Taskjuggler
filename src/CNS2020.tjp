@@ -21,7 +21,7 @@ Journal entries to record events
  */
 
 /* Project header */
-project OCNS2020 "OCNS2020" "0.1"
+project OCNS2020 "OCNS2020" "0.2"
 2019-08-01-0:00-+0100 - 2020-10-31-0:00-+0100
 {
   timezone "Europe/London"
@@ -119,8 +119,8 @@ resource members "OCNS members" {
 
 }
 
-/* non member users */
-resource users "All users" {
+/* non member registrants */
+resource registrants "All registrants" {
 
 }
 
@@ -164,7 +164,6 @@ task OCNS2020 "OCNS 2020" {
 
     task membership_reminder "E-mail reminder of membership requirement for voting rights" {
       allocate communications_officer
-      start 2019-08-10
       effort 0.5d
     }
 
@@ -319,6 +318,23 @@ task OCNS2020 "OCNS 2020" {
           effort 2w
           depends !mailing_list_check
         }
+
+        /* Also remove permissions from old pages: archived */
+        task update_permissions "Ensure meetingedit group has access to new pages" {
+          effort 2h
+          depends !copy_pages
+        }
+
+        task update_home_page_meeting_edit "Update home page of meeting edit group to new CNS page" {
+          effort 2h
+          depends !update_permissions
+        }
+
+        task update_links "Update site links on main CNS page" {
+          effort 1d
+          depends !copy_pages
+        }
+
         task update_board_pages "Update Board/Committee pages and archive old ones" {
           effort 1w
           depends !copy_pages
@@ -346,6 +362,7 @@ task OCNS2020 "OCNS 2020" {
           task registration_form "Registration form" {
 
             /* Copy over registration form */
+            /* Remember to set it to close at end of conference */
             task copy_over "Copy over form" {
               depends !!membership_form.check_pricing
               effort 2d
@@ -396,7 +413,7 @@ task OCNS2020 "OCNS 2020" {
             }
 
             task create_vouchers "Create the required voucher codes" {
-              allocate board
+              allocate webmaster
               length 1w
               depends !confirm_requirements
             }
@@ -424,6 +441,12 @@ task OCNS2020 "OCNS 2020" {
         task update_expiration "Update expiration dates of inactive accounts" {
           start 2019-12-01
           effort 1w
+          priority 800
+        }
+
+        task update_welcome_letter_template "Update welcome letter template" {
+          start 2020-01-01
+          effort 2h
           priority 800
         }
       }
@@ -472,6 +495,18 @@ task OCNS2020 "OCNS 2020" {
           depends !call
           end 2020-05-15
         }
+
+        task latest_safe_abstract "Latest safe date for membership before abstract submission ends" {
+          start 2020-02-27
+          milestone
+          flags conference_calendar
+        }
+
+        task latest_safe_members "Latest safe date for membership before early registration for members ends" {
+          start 2020-05-09
+          milestone
+          flags conference_calendar
+        }
       }
 
       /* Travel awards */
@@ -506,6 +541,7 @@ task OCNS2020 "OCNS 2020" {
           end 2020-03-04
           actual:end 2020-03-11
           flags conference_calendar
+          allocate registrants
         }
 
         task acceptance_notification "Notification of abstract acceptance" {
@@ -560,20 +596,6 @@ task OCNS2020 "OCNS 2020" {
         }
       }
 
-      /* Other milestons */
-      task latest_safe_abstract "Latest safe date for membership application before abstract submission closes" {
-        start 2020-02-27
-        milestone
-        flags conference_calendar
-      }
-
-      task latest_safe_members "Latest safe date for membership application before early registration for members closes" {
-        start 2020-05-09
-        milestone
-        flags conference_calendar
-      }
-
-
 
       /* Conference */
       task Conference "Conference: Melbourne" {
@@ -615,9 +637,10 @@ task OCNS2020 "OCNS 2020" {
         }
 
         /* Submission period */
-        task survey_submissions "Poster submission period" {
+        task survey_submissions "Survey submission period" {
           depends !call
           end 2020-09-07
+          allocate members
         }
       }
 
@@ -635,6 +658,7 @@ task OCNS2020 "OCNS 2020" {
         task poster_submissions "Poster submission period" {
           depends !call
           end 2020-09-07
+          allocate registrants
         }
 
         /* Set up gallery */
@@ -651,7 +675,7 @@ task OCNS2020 "OCNS 2020" {
 
 /* Reports: detaulf */
 taskreport overview "index" {
-  columns name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration
   formats html
 }
 
