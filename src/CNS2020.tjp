@@ -168,11 +168,13 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task prepare_voting_form "Prepare voting form" {
+      depends !setup_director_candidate_pages
       allocate webmaster
       effort 2d
     }
 
     task open_voting_form "Open voting form" {
+      depends !prepare_voting_form
       allocate webmaster
       effort 1h
       start 2019-10-17
