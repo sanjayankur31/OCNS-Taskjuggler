@@ -134,6 +134,12 @@ task OCNS2020 "OCNS 2020" {
     flags elections
     start 2019-08-25
 
+    /* A two person committee is required */
+    task prepare_nomination_committee "Prepare Nomination Committee" {
+      allocate board
+      effort 3d
+    }
+
     task prepare_form "Copy over candidancy form" {
       allocate webmaster
       effort 1d
@@ -212,8 +218,9 @@ task OCNS2020 "OCNS 2020" {
 
     /* Only nomination committee sees detailed results. Everyone else only sees winners */
     task send_results "Send results to Nomination committee" {
-      allocate webmaster
+      depends !prepare_nomination_committee
       depends !analyse_votes
+      allocate webmaster
       effort 1h
     }
 
