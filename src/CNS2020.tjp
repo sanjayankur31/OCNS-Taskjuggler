@@ -111,11 +111,9 @@ resource board "OCNS Board" {
 
   }
 
-  /* Program committee */
-  resource programme_committee "Programme committee" {
-    resource programme_chair  "Programme chair" {
+  /* Program chair */
+  resource programme_chair  "Programme chair" {
 
-    }
   }
 
   /* Publication chair */
@@ -140,22 +138,22 @@ resource board "OCNS Board" {
 
 }
 
+/* Programme committee */
+resource programme_committee "Programme committee" {
+  purge managers
+  managers programme_chair
+}
+
 /* Local organisers */
 resource local_organisers "Local organisers" {
+  purge managers
+  managers local_organiser_chair
 }
 
 /* Nomination committee */
 resource nomination_committee "Nomination committee" {
-
-}
-
-/* members */
-resource members "OCNS members" {
-
-}
-
-/* non member registrants */
-resource registrants "All registrants" {
+  purge managers
+  managers president
 
 }
 
@@ -192,7 +190,6 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task nomination_period "Nomination period" {
-      allocate members
       start 2019-09-01
       end 2019-10-01
     }
@@ -240,7 +237,6 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task voting_period "Voting period" {
-      allocate members
       depends !open_voting_form
       end 2019-11-18
     }
@@ -295,7 +291,7 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task allocate_roles "Allocate roles to new directors" {
-      allocate board
+      allocate president
       depends !inform_board
       length 2w
     }
@@ -601,7 +597,6 @@ task OCNS2020 "OCNS 2020" {
           end 2020-03-04
           actual:end 2020-03-11
           flags conference_calendar
-          allocate registrants
         }
 
         task acceptance_notification "Notification of abstract acceptance" {
@@ -701,7 +696,6 @@ task OCNS2020 "OCNS 2020" {
         task survey_submissions "Survey submission period" {
           depends !call
           end 2020-09-07
-          allocate members
         }
       }
 
@@ -719,7 +713,6 @@ task OCNS2020 "OCNS 2020" {
         task poster_submissions "Poster submission period" {
           depends !call
           end 2020-09-07
-          allocate registrants
         }
 
         /* Set up gallery */
@@ -801,7 +794,7 @@ taskreport chart "" {
 resourcereport resources "" {
   columns name, start, end, duration
   hidetask @none
-  sortresources tree
+  sortresources effort.down
   loadunit days
   timeformat "%a %Y-%m-%d"
   caption 'All duration values are in man days.'
@@ -831,7 +824,7 @@ taskreport elections "" {
 resourcereport elections_resources "" {
   columns name, start, end, duration
   hidetask ~elections
-  sortresources tree
+  sortresources effort.down
   loadunit days
   timeformat "%a %Y-%m-%d"
   caption 'All duration values are in man days.'
