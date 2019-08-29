@@ -56,61 +56,96 @@ flags elections
 /* Accounts */
 
 /* Resources */
-/* Infra */
-resource webmaster "Webmaster"{
-
-}
-
-/* Workshops */
-resource workshop_team "Workshop team" {
-
-}
-
-/* Tutorials */
-resource tutorials_team "Tutorials team" {
-
-}
-
-
-/* Communications */
-resource communications_officer "Communications officer" {
-
-}
-
-/* Program committee */
-resource programme_committee "Programme committee" {
-  resource programme_chair  "Programme chair" {
-
-  }
-}
-
-/* Local organisers */
-resource local_organizers "Local organisers" {
-
-}
-
-/* Travel award chair */
-resource travel_chair "Travel chair" {
-
-}
-
 /* The OCNS Board */
 resource board "OCNS Board" {
 
+
+  /* President */
+  resource president "President" {
+
+  }
+
+
+  /* VP/Secretary */
+  resource vp_secretary "Vice president/Secretary" {
+
+  }
+
+  /* Member approval */
+  resource member_approval_chair "Member approval chair" {
+
+  }
+
+  /* Registration */
+  resource registration_chair "Registration chair" {
+
+  }
+
+  /* Webmaster */
+  resource webmaster "Webmaster"{
+
+  }
+
+  /* Travel award chair */
+  resource travel_chair "Travel chair" {
+
+  }
+
+  /* Sponsorship chair */
+  resource sponsorship_chair "Sponsorship chair" {
+
+  }
+
+  /* Education chair */
+  resource education_chair "Education chair" {
+
+  }
+
+  /* Workshops */
+  resource workshops_chair "Workshop chair" {
+
+  }
+
+  /* Tutorials */
+  resource tutorials_chair "Tutorials chair" {
+
+  }
+
+  /* Program committee */
+  resource programme_committee "Programme committee" {
+    resource programme_chair  "Programme chair" {
+
+    }
+  }
+
+  /* Publication chair */
+  resource publication_chair "Publication chair" {
+
+  }
+
+  /* Social media manager */
+  resource social_media_chair "Social media chair" {
+
+  }
+
+  /* Board member head of local organisers */
+  resource local_organiser_chair "Local organiser chair" {
+
+  }
+
+  /* Treasurer */
+  resource treasurer "OCNS treasurer" {
+
+  }
+
 }
 
-/* Social media manager */
-resource social_manager "Social media manager" {
-
+/* Local organisers */
+resource local_organisers "Local organisers" {
 }
 
 /* Nomination committee */
 resource nomination_committee "Nomination committee" {
-
-}
-
-/* Treasurer */
-resource treasurer "OCNS treasurer" {
 
 }
 
@@ -136,7 +171,7 @@ task OCNS2020 "OCNS 2020" {
 
     /* A two person committee is required */
     task create_nomination_committee "Create Nomination Committee" {
-      allocate board
+      allocate president
       effort 3d
     }
 
@@ -145,13 +180,13 @@ task OCNS2020 "OCNS 2020" {
       effort 1d
     }
     task call "Call for candidate directors" {
-      allocate communications_officer
+      allocate vp_secretary
       effort 0.5d
       start 2019-09-01
     }
 
     task reminder "Reminder call for candidate directors" {
-      allocate communications_officer
+      allocate vp_secretary
       effort 0.5d
       start 2019-09-14
     }
@@ -181,7 +216,7 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task membership_reminder "E-mail reminder of membership requirement for voting rights" {
-      allocate communications_officer
+      allocate vp_secretary
       effort 0.5d
     }
 
@@ -199,7 +234,7 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task voting_call "Send out call for voting" {
-      allocate communications_officer
+      allocate vp_secretary
       effort 0.5d
       depends !open_voting_form
     }
@@ -211,13 +246,13 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task election_reminder_1 "Send out first reminder" {
-      allocate communications_officer
+      allocate vp_secretary
       start 2019-10-24
       effort 0.5d
     }
 
     task election_reminder_2 "Send out second reminder" {
-      allocate communications_officer
+      allocate vp_secretary
       start 2019-10-31
       effort 0.5d
     }
@@ -243,18 +278,18 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task contact_winners "Contact winners to confirm acceptance of position" {
-      allocate communications_officer
+      allocate vp_secretary
       depends !verify_results
       effort 1h
     }
     task contact_non_winners "Contact non-winners" {
-      allocate communications_officer
+      allocate vp_secretary
       depends !verify_results
       effort 1h
     }
 
     task inform_board "Inform the Board" {
-      allocate communications_officer
+      allocate vp_secretary
       depends !contact_winners
       effort 1h
     }
@@ -262,7 +297,7 @@ task OCNS2020 "OCNS 2020" {
     task allocate_roles "Allocate roles to new directors" {
       allocate board
       depends !inform_board
-      effort 2w
+      length 2w
     }
 
     /* Delete so that all votes are deleted */
@@ -279,7 +314,7 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task announce_results "Announce results to members" {
-      allocate communications_officer
+      allocate vp_secretary
       effort 1d
       depends !inform_board
     }
@@ -509,7 +544,7 @@ task OCNS2020 "OCNS 2020" {
         flags conference_calendar
 
         task call "Call for registrations" {
-          allocate communications_officer
+          allocate vp_secretary
           effort 0.5d
         }
 
@@ -556,7 +591,7 @@ task OCNS2020 "OCNS 2020" {
 
         task call "Call for submissions" {
           depends !confmaster_open
-          allocate communications_officer
+          allocate vp_secretary
           effort 0.5d
           flags conference_calendar
         }
@@ -596,7 +631,7 @@ task OCNS2020 "OCNS 2020" {
         start 2019-12-15
 
         task call "Call for submissions" {
-          allocate communications_officer
+          allocate vp_secretary
           effort 0.5d
         }
 
@@ -611,7 +646,7 @@ task OCNS2020 "OCNS 2020" {
         start 2019-12-15
 
         task call "Call for submissions" {
-          allocate communications_officer
+          allocate vp_secretary
           effort 0.5d
         }
 
@@ -658,7 +693,7 @@ task OCNS2020 "OCNS 2020" {
         /* Call for submissions */
         task call "Call for submissions" {
           start ${conference_end_date}
-          allocate communications_officer
+          allocate vp_secretary
           effort 0.5d
         }
 
@@ -676,7 +711,7 @@ task OCNS2020 "OCNS 2020" {
         /* Call for submissions */
         task call "Call for submissions" {
           start ${conference_end_date}
-          allocate communications_officer
+          allocate vp_secretary
           effort 0.5d
         }
 
