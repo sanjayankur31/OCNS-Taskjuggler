@@ -208,14 +208,16 @@ task OCNS2020 "OCNS 2020" {
 
     task call_check "Check that call for director candidates went out" {
       allocate president
-      duration 2w
+      effort 1h
       depends !call
     }
 
     task reminder "Reminder call for candidate directors" {
       allocate vp_secretary
       effort 0.5d
-      depends !call_check
+      depends !call_check {
+        gapduration 2w
+      }
     }
 
     task nomination_period "Nomination period" {
@@ -279,7 +281,7 @@ task OCNS2020 "OCNS 2020" {
     task check_voting_call "Check that call for voting went out" {
       allocate president
       depends !voting_call
-      duration 1w
+      effort 1h
     }
 
     task voting_period "Voting period" {
@@ -289,14 +291,18 @@ task OCNS2020 "OCNS 2020" {
 
     task election_reminder_1 "Send out first reminder" {
       allocate vp_secretary
-      depends !check_voting_call
-      duration 1w
+      depends !check_voting_call {
+        gapduration 1w
+      }
+      effort 1h
     }
 
     task election_reminder_2 "Send out second reminder" {
-      depends !election_reminder_1
+      depends !election_reminder_1 {
+        gapduration 1w
+      }
       allocate vp_secretary
-      duration 1w
+      effort 1h
     }
 
     task close_voting_form "Close voting form" {
