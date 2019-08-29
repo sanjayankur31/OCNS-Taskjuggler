@@ -22,4 +22,4 @@ popd
 git add .
 git commit -m "Regenerate" -S
 git push
-git checkout source
+git checkout source && mkdir docs
