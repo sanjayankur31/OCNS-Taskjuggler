@@ -183,6 +183,12 @@ task OCNS2020 "OCNS 2020" {
       start 2019-09-01
     }
 
+    task call_check "Check that call for director candidates went out" {
+      allocate president
+      effort 1h
+      depends !call
+    }
+
     task reminder "Reminder call for candidate directors" {
       allocate vp_secretary
       effort 0.5d
@@ -202,7 +208,7 @@ task OCNS2020 "OCNS 2020" {
 
     task vet_candidates "Vet candidates" {
       depends !send_candidates_for_checks
-      allocate nomination_committee
+      allocate nomination_committee, president
       effort 2w
     }
 
@@ -210,6 +216,12 @@ task OCNS2020 "OCNS 2020" {
       allocate webmaster
       effort 2w
       depends !vet_candidates
+    }
+
+    task check_candidate_pages "Check that candidate pages are ready" {
+      allocate president
+      effort 12h
+      depends !setup_director_candidate_pages
     }
 
     task membership_reminder "E-mail reminder of membership requirement for voting rights" {
@@ -236,6 +248,12 @@ task OCNS2020 "OCNS 2020" {
       depends !open_voting_form
     }
 
+    task check_voting_call "Check that call for voting went out" {
+      allocate president
+      effort 1h
+      depends !voting_call
+    }
+
     task voting_period "Voting period" {
       depends !open_voting_form
       end 2019-11-18
@@ -253,9 +271,15 @@ task OCNS2020 "OCNS 2020" {
       effort 0.5d
     }
 
-    task analyse_votes "Analyse votes" {
+    task send_form_results_to_president "Send voting form results to President" {
       allocate webmaster
       depends !voting_period
+      effort 2h
+    }
+
+    task analyse_votes "Analyse votes and select winners" {
+      allocate president
+      depends !send_form_results_to_president
       effort 1w
     }
 
@@ -263,7 +287,7 @@ task OCNS2020 "OCNS 2020" {
     task send_results "Send results to Nomination committee" {
       depends !create_nomination_committee
       depends !analyse_votes
-      allocate webmaster
+      allocate president
       effort 1h
     }
 
@@ -274,26 +298,26 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task contact_winners "Contact winners to confirm acceptance of position" {
-      allocate vp_secretary
+      allocate president
       depends !verify_results
       effort 1h
     }
     task contact_non_winners "Contact non-winners" {
-      allocate vp_secretary
+      allocate president
       depends !verify_results
-      effort 1h
-    }
-
-    task inform_board "Inform the Board" {
-      allocate vp_secretary
-      depends !contact_winners
       effort 1h
     }
 
     task allocate_roles "Allocate roles to new directors" {
       allocate president
-      depends !inform_board
+      depends !contact_winners, !contact_non_winners
       length 2w
+    }
+
+    task inform_board "Inform the Board" {
+      allocate president
+      depends !allocate_roles
+      effort 1h
     }
 
     /* Delete so that all votes are deleted */
@@ -303,16 +327,22 @@ task OCNS2020 "OCNS 2020" {
       depends !inform_board
     }
 
-    task announce_results_web "Announce results on home and landing pages" {
+    task announce_results_web "Add results on home and landing web pages" {
       allocate webmaster
       effort 3d
       depends !inform_board
     }
 
-    task announce_results "Announce results to members" {
+    task announce_results "Send results e-mail to members" {
       allocate vp_secretary
       effort 1d
       depends !inform_board
+    }
+
+    task check_results_announced "Check that results are on the website and e-mail sent to members" {
+      allocate president
+      effort 1h
+      depends !announce_results, !announce_results_web
     }
   }
 
