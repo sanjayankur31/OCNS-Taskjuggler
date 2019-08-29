@@ -26,9 +26,10 @@ project OCNS2020 "OCNS2020" "0.2"
 {
   timezone "Europe/London"
 
-  # Since the conference includes weekend, set this for allocation
-  # Not that we use allocations
-  workinghours mon - sun 9:00 - 17:00
+  dailyworkinghours 2
+  weekstartsmonday
+  workinghours mon - fri 16:00 - 18:00
+  workinghours sat, sun off
 
   scenario plan "Plan" {
     scenario actual "Actual"
@@ -43,6 +44,10 @@ vacation "christmas" 2019-12-20 - 2020-01-15
 /* Macros */
 macro conference_start_date [ 2020-07-18 ]
 macro conference_end_date [ 2020-07-22 ]
+macro common_cap [
+  caption 'Based on 2 hours a day, and 6 a week without weekends. Durations are in man days, not working days.'
+
+]
 
 /* Flags */
 
@@ -62,77 +67,91 @@ resource board "OCNS Board" {
 
   /* President */
   resource president "President" {
-
+  limits { dailymax 2h weeklymax 6h }
   }
 
 
   /* VP/Secretary */
   resource vp_secretary "Vice president/Secretary" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Member approval */
   resource member_approval_chair "Member approval chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Registration */
   resource registration_chair "Registration chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Webmaster */
   resource webmaster "Webmaster"{
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Travel award chair */
   resource travel_chair "Travel chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Sponsorship chair */
   resource sponsorship_chair "Sponsorship chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Education chair */
   resource education_chair "Education chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Workshops */
   resource workshops_chair "Workshop chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Tutorials */
   resource tutorials_chair "Tutorials chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Program chair */
   resource programme_chair  "Programme chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Publication chair */
   resource publication_chair "Publication chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Social media manager */
   resource social_media_chair "Social media chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Board member head of local organisers */
   resource local_organiser_chair "Local organiser chair" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
   /* Treasurer */
   resource treasurer "OCNS treasurer" {
+  limits { dailymax 2h weeklymax 6h }
 
   }
 
@@ -140,18 +159,21 @@ resource board "OCNS Board" {
 
 /* Programme committee */
 resource programme_committee "Programme committee" {
+  limits { dailymax 2h weeklymax 6h }
   purge managers
   managers programme_chair
 }
 
 /* Local organisers */
 resource local_organisers "Local organisers" {
+  limits { dailymax 2h weeklymax 6h }
   purge managers
   managers local_organiser_chair
 }
 
 /* Nomination committee */
 resource nomination_committee "Nomination committee" {
+  limits { dailymax 2h weeklymax 6h }
   purge managers
   managers president
 
@@ -170,29 +192,30 @@ task OCNS2020 "OCNS 2020" {
     /* A two person committee is required */
     task create_nomination_committee "Create Nomination Committee" {
       allocate president
-      effort 3d
+      effort 6h
     }
 
     task prepare_form "Copy over and open candidancy form" {
       allocate webmaster
-      effort 1d
+      effort 2h
     }
+
     task call "Call for candidate directors" {
       allocate vp_secretary
-      effort 0.5d
       start 2019-09-01
+      effort 2h
     }
 
     task call_check "Check that call for director candidates went out" {
       allocate president
-      effort 1h
+      duration 2w
       depends !call
     }
 
     task reminder "Reminder call for candidate directors" {
       allocate vp_secretary
       effort 0.5d
-      start 2019-09-14
+      depends !call_check
     }
 
     task nomination_period "Nomination period" {
@@ -208,79 +231,90 @@ task OCNS2020 "OCNS 2020" {
 
     task vet_candidates "Vet candidates" {
       depends !send_candidates_for_checks
-      allocate nomination_committee, president
-      effort 2w
+      allocate nomination_committee
+      duration 7d
     }
 
     task setup_director_candidate_pages "Set up director candidate pages" {
       allocate webmaster
-      effort 2w
+      effort 10h
       depends !vet_candidates
     }
 
     task check_candidate_pages "Check that candidate pages are ready" {
       allocate president
-      effort 12h
+      effort 2h
       depends !setup_director_candidate_pages
     }
 
+    task announce_candidate_pages "Announce candidate pages to members" {
+      allocate vp_secretary
+      effort 2h
+      depends !check_candidate_pages
+    }
     task membership_reminder "E-mail reminder of membership requirement for voting rights" {
       allocate vp_secretary
-      effort 0.5d
+      effort 2h
+      depends !check_candidate_pages
     }
 
     task prepare_voting_form "Prepare voting form" {
-      depends !setup_director_candidate_pages
+      depends !announce_candidate_pages
       allocate webmaster
-      effort 2d
+      effort 6h
     }
 
     task open_voting_form "Open voting form" {
       depends !prepare_voting_form
       allocate webmaster
       effort 1h
-      start 2019-10-17
     }
 
     task voting_call "Send out call for voting" {
       allocate vp_secretary
-      effort 0.5d
+      effort 1h
       depends !open_voting_form
     }
 
     task check_voting_call "Check that call for voting went out" {
       allocate president
-      effort 1h
       depends !voting_call
+      duration 1w
     }
 
     task voting_period "Voting period" {
       depends !open_voting_form
-      end 2019-11-18
+      duration 1m
     }
 
     task election_reminder_1 "Send out first reminder" {
       allocate vp_secretary
-      start 2019-10-24
-      effort 0.5d
+      depends !check_voting_call
+      duration 1w
     }
 
     task election_reminder_2 "Send out second reminder" {
+      depends !election_reminder_1
       allocate vp_secretary
-      start 2019-10-31
-      effort 0.5d
+      duration 1w
+    }
+
+    task close_voting_form "Close voting form" {
+      depends !voting_period
+      allocate webmaster
+      effort 0.5h
     }
 
     task send_form_results_to_president "Send voting form results to President" {
       allocate webmaster
-      depends !voting_period
+      depends !close_voting_form
       effort 2h
     }
 
     task analyse_votes "Analyse votes and select winners" {
       allocate president
       depends !send_form_results_to_president
-      effort 1w
+      effort 10h
     }
 
     /* Only nomination committee sees detailed results. Everyone else only sees winners */
@@ -293,25 +327,25 @@ task OCNS2020 "OCNS 2020" {
 
     task verify_results "Verify results" {
       allocate nomination_committee
-      effort 1w
+      effort 10h
       depends !send_results
     }
 
     task contact_winners "Contact winners to confirm acceptance of position" {
       allocate president
       depends !verify_results
-      effort 1h
+      effort 4h
     }
     task contact_non_winners "Contact non-winners" {
       allocate president
       depends !verify_results
-      effort 1h
+      effort 4h
     }
 
     task allocate_roles "Allocate roles to new directors" {
       allocate president
       depends !contact_winners, !contact_non_winners
-      length 2w
+      duration 2w
     }
 
     task inform_board "Inform the Board" {
@@ -329,13 +363,13 @@ task OCNS2020 "OCNS 2020" {
 
     task announce_results_web "Add results on home and landing web pages" {
       allocate webmaster
-      effort 3d
+      effort 8h
       depends !inform_board
     }
 
     task announce_results "Send results e-mail to members" {
       allocate vp_secretary
-      effort 1d
+      effort 2h
       depends !inform_board
     }
 
@@ -358,17 +392,17 @@ task OCNS2020 "OCNS 2020" {
       /* G-suite */
       task g_suite "Google suite" {
         allocate webmaster
-        depends OCNS2020.director_elections
 
         /* Check everyone has credentials */
         task credentials_check "Check that everyone has required credentials" {
-          effort 1w
+          depends OCNS2020.director_elections
+          effort 10h
         }
 
         /* Check all groups are up to date */
         task groups_check "Check all group memberships" {
           depends !credentials_check
-          effort 1w
+          effort 10h
         }
       }
 
@@ -380,30 +414,30 @@ task OCNS2020 "OCNS 2020" {
         /* Check everyone has credentials */
         task credentials_check "Check that everyone has required credentials" {
           depends OCNS2020.director_elections
-          effort 2d
+          effort 4d
         }
 
         /* Check everyone has access */
         task access_check "Check that everyone has required access" {
           depends !credentials_check
-          effort 2d
+          effort 4h
         }
 
         /* Check mailing lists */
         task mailing_list_check "Check that the mailing lists are up to date" {
           depends !access_check
-          effort 2d
+          duration 2d
         }
 
         /* Copy over web content */
         task copy_pages "Copy over all 2019 pages to 2020" {
-          effort 1w
+          effort 8h
           depends !mailing_list_check
         }
 
         /* Update menu links */
         task update_menu_links "Update links in main menu" {
-          effort 3d
+          effort 6h
           depends !copy_pages
         }
 
@@ -419,12 +453,12 @@ task OCNS2020 "OCNS 2020" {
         }
 
         task update_links "Update site links on main CNS page" {
-          effort 1d
+          effort 5h
           depends !copy_pages
         }
 
         task update_board_pages "Update Board/Committee pages and archive old ones" {
-          effort 1w
+          effort 5h
           depends !copy_pages
         }
 
@@ -436,13 +470,13 @@ task OCNS2020 "OCNS 2020" {
 
             /* Check that membership form is up to date */
             task check_form "Check membership form" {
-              length 2d
+              effort 2h
             }
 
             /* Check and update if needed */
             task check_pricing "Check membership rates" {
               depends !check_form
-              length 2d
+              effort 4h
             }
           }
 
@@ -453,11 +487,11 @@ task OCNS2020 "OCNS 2020" {
             /* Remember to set it to close at end of conference */
             task copy_over "Copy over form" {
               depends !!membership_form.check_pricing
-              effort 2d
+              effort 4h
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
-              effort 2d
+              effort 4h
               depends !copy_over
             }
           }
@@ -467,11 +501,11 @@ task OCNS2020 "OCNS 2020" {
             /* Copy over registration form */
             task copy_over "Copy over form" {
               depends !!membership_form.check_pricing
-              effort 2d
+              effort 4h
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
-              effort 2d
+              effort 4h
               depends !copy_over
             }
           }
@@ -481,11 +515,11 @@ task OCNS2020 "OCNS 2020" {
             /* Copy over registration form */
             task copy_over "Copy over form" {
               depends !!membership_form.check_pricing
-              effort 2d
+              effort 4h
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
-              effort 2d
+              effort 4h
               depends !copy_over
             }
           }
@@ -496,19 +530,19 @@ task OCNS2020 "OCNS 2020" {
             /* Confirm what vouchers are needed */
             task confirm_requirements "Confirm what vouchers are required" {
               allocate board
-              length 1w
+              duration 1w
               depends !!add_extras_form
             }
 
             task create_vouchers "Create the required voucher codes" {
               allocate webmaster
-              length 1w
+              duration 1w
               depends !confirm_requirements
             }
 
             /* Send codes to respective Board members */
             task send_vouchers "Send voucher codes to respective Board members" {
-              effort 4d
+              effort 8h
               depends !create_vouchers
             }
           }
@@ -519,7 +553,7 @@ task OCNS2020 "OCNS 2020" {
 
             /* Check that membership form is up to date */
             task update_form "Update travel award form" {
-              effort 2d
+              effort 4h
             }
           }
         }
@@ -528,7 +562,7 @@ task OCNS2020 "OCNS 2020" {
         /* Is this needed? Should speak to Memberclicks about this */
         task update_expiration "Update expiration dates of inactive accounts" {
           start 2019-12-01
-          effort 1w
+          effort 10h
           priority 800
         }
 
@@ -541,7 +575,7 @@ task OCNS2020 "OCNS 2020" {
 
       /* Set up poster upload form */
       task poster_gallery_form "Set up poster gallery submission form" {
-        effort 1w
+        effort 3h
         allocate webmaster
         priority 100
       }
@@ -811,14 +845,14 @@ taskreport overview "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
 
 taskreport chart "" {
   columns name, chart
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
 
 resourcereport resources "" {
@@ -827,7 +861,7 @@ resourcereport resources "" {
   sortresources effort.down
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
 
 taskreport webmaster "" {
@@ -836,7 +870,7 @@ taskreport webmaster "" {
   hideresource ~isdutyof(webmaster, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
 
 icalreport calendar "CNS2020" {
@@ -848,7 +882,7 @@ taskreport elections "" {
   hidetask ~elections
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
 
 resourcereport elections_resources "" {
@@ -857,7 +891,7 @@ resourcereport elections_resources "" {
   sortresources effort.down
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
 
 /* Conference */
@@ -866,5 +900,5 @@ taskreport conference_calendar "" {
   hidetask ~conference_calendar
   loadunit days
   timeformat "%a %Y-%m-%d"
-  caption 'All duration values are in man days.'
+  ${common_cap}
 }
