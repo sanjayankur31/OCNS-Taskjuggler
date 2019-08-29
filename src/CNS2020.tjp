@@ -135,12 +135,12 @@ task OCNS2020 "OCNS 2020" {
     start 2019-08-25
 
     /* A two person committee is required */
-    task prepare_nomination_committee "Prepare Nomination Committee" {
+    task create_nomination_committee "Create Nomination Committee" {
       allocate board
       effort 3d
     }
 
-    task prepare_form "Copy over candidancy form" {
+    task prepare_form "Copy over and open candidancy form" {
       allocate webmaster
       effort 1d
     }
@@ -162,10 +162,22 @@ task OCNS2020 "OCNS 2020" {
       end 2019-10-01
     }
 
+    task send_candidates_for_checks "Send candidates to Nomination Committee" {
+      depends !nomination_period
+      allocate webmaster
+      effort 2h
+    }
+
+    task vet_candidates "Vet candidates" {
+      depends !send_candidates_for_checks
+      allocate nomination_committee
+      effort 2w
+    }
+
     task setup_director_candidate_pages "Set up director candidate pages" {
       allocate webmaster
       effort 2w
-      depends !nomination_period
+      depends !vet_candidates
     }
 
     task membership_reminder "E-mail reminder of membership requirement for voting rights" {
@@ -218,7 +230,7 @@ task OCNS2020 "OCNS 2020" {
 
     /* Only nomination committee sees detailed results. Everyone else only sees winners */
     task send_results "Send results to Nomination committee" {
-      depends !prepare_nomination_committee
+      depends !create_nomination_committee
       depends !analyse_votes
       allocate webmaster
       effort 1h
