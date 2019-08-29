@@ -45,7 +45,7 @@ leaves holiday "christmas" 2019-12-20 - 2020-01-15
 macro conference_start_date [ 2020-07-18 ]
 macro conference_end_date [ 2020-07-22 ]
 macro common_cap [
-  caption 'Based on 2 hours a day, and 6 a week without weekends. Durations are in man days, not working days.'
+  caption 'Based on 2 hours a day, and 6 a week excluding weekends. Durations include all days, not only working days.'
 
 ]
 
