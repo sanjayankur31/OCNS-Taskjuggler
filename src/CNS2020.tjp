@@ -39,7 +39,7 @@ project OCNS2020 "OCNS2020" "0.2"
 }
 
 /* Holidays/vacations */
-vacation "christmas" 2019-12-20 - 2020-01-15
+leaves holiday "christmas" 2019-12-20 - 2020-01-15
 
 /* Macros */
 macro conference_start_date [ 2020-07-18 ]
@@ -345,7 +345,7 @@ task OCNS2020 "OCNS 2020" {
     task allocate_roles "Allocate roles to new directors" {
       allocate president
       depends !contact_winners, !contact_non_winners
-      duration 2w
+      effort 12h
     }
 
     task inform_board "Inform the Board" {
