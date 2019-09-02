@@ -749,7 +749,7 @@ task OCNS2020 "OCNS 2020" {
 
         task type_assessment "Assign abstracts Oral/Poster presentations" {
           depends !acceptance_notification
-          duration 3w
+          duration 2w
           allocate programme_committee, programme_chair
         }
 
@@ -909,18 +909,10 @@ task OCNS2020 "OCNS 2020" {
           /* July 05 */
         }
 
-        /* TODO */
         task programmme_book_info "Ask organisers to send in info for programme book" {
           allocate tutorials_chair
           effort 1h
-          /* May 23 */
-        }
-
-        /* TODO */
-        task programmme_info_update "Confirm programme book tutorial info with organisers" {
-          effort 1h
-          allocate tutorials_chair
-          /* June 13 */
+          depends OCNS2020.conference_tasks.conference.abstracts.send_programme_to_vp
         }
       }
 
@@ -1011,19 +1003,13 @@ task OCNS2020 "OCNS 2020" {
           }
         }
 
-        /* TODO */
         task programmme_book_info "Ask organisers to send in info for programme book" {
           allocate workshops_chair
           effort 1h
+          depends OCNS2020.conference_tasks.conference.abstracts.send_programme_to_vp
           /* May 23 */
         }
 
-        /* TODO */
-        task programmme_info_update "Confirm programme book workshop info with organisers" {
-          effort 1h
-          allocate workshops_chair
-          /* June 13 */
-        }
 
         task workshop_attendance_survey "Workshop attendance survey" {
           allocate workshops_chair
