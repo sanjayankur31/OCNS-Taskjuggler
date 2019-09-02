@@ -729,6 +729,12 @@ task OCNS2020 "OCNS 2020" {
           priority 800
         }
 
+        task send_accepted_to_pub_chair "Send accepted abstracts to publication chair" {
+          depends !review_period
+          effort 8h
+          allocate programme_chair
+        }
+
         task type_assessment "Assign abstracts Oral/Poster presentations" {
           depends !acceptance_notification
           duration 4w
