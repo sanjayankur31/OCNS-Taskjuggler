@@ -631,6 +631,24 @@ task OCNS2020 "OCNS 2020" {
         allocate programme_chair
         effort 4h
       }
+
+      task check_board_is_registered "Check all directors are registered" {
+        allocate president
+        start 2020-04-01
+        duration 4w
+      }
+
+      task create_and_send_out_meeting_agendas "Create and send out agenda for Board and Member's meetings" {
+        start 2020-06-01
+        allocate president
+        duration 4w
+      }
+
+      task check_new_board_requirements "Check what Board positions need to be replaced next year" {
+        depends !create_and_send_out_meeting_agendas
+        allocate president
+        effort 6h
+      }
     }
 
     task conference "CNS*2020" {
@@ -1094,6 +1112,12 @@ task OCNS2020 "OCNS 2020" {
         task pc_meeting "Programme committee meeting" {
           flags conference_calendar
           duration 1d
+          depends !board_meeting
+        }
+
+        task members_meeting "Members' meeting" {
+          flags conference_calendar
+          duration 1h
           depends !board_meeting
         }
 
