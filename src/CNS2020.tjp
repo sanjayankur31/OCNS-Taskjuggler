@@ -163,6 +163,12 @@ resource programme_committee "Programme committee" {
   managers programme_chair
 }
 
+resource abstract_review_committee "Abstract review committee" {
+  limits { dailymax 2h weeklymax 6h }
+  purge managers
+  managers programme_committee
+}
+
 /* Local organisers */
 resource local_organisers "Local organisers" {
   limits { dailymax 2h weeklymax 6h }
