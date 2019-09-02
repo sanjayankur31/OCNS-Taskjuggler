@@ -712,43 +712,149 @@ task OCNS2020 "OCNS 2020" {
 
         task call "Call for submissions" {
           allocate vp_secretary
+          /* 17 Dec in 2019 */
           effort 0.5d
         }
 
         task submissions "Submission period" {
           depends !call
-          end 2020-01-31
+          duration 1m
         }
 
-        task workshops_on_website ""
-
-        task workshop_travel_award_nominations "Travel award nominations for workshops" {
-          task nomination_period "Nomination period" {
-            /* Deadline extended 08 march */
-            /* closed 19 march */
-
-          }
-        }
-
-        task workshop_schedule "Send out workshop schedule and room assignments to organisers" {
+        task review "Review workshop proposals" {
+          depends !submissions
           allocate workshops_chair
+          duration 1m
+        }
+
+        task acceptance "Send out acceptance e-mails" {
+          allocate workshops_chair
+          depends !review
+          effort 4h
+          /* Feb 21 in 2019 */
+        }
+
+        task send_vouchers "Send out vouchers to organisers" {
+          allocate workshops_chair
+          depends !acceptance
+          /* Feb 22 */
+          effort 2h
+        }
+
+        task notify_schedule "Send out workshop day schedule to organisers" {
+          allocate workshops_chair
+          depends !acceptance
+          effort 2h
           /* May 01 */
         }
 
+        task put_list_on_website "Put workshop list on website" {
+          depends !acceptance
+          allocate workshops_chair
+          effort 8h
+        }
+
+        task notify_on_web "Notify organisers of list being posted on website" {
+          depends !put_list_on_website
+          allocate workshops_chair
+          effort 2h
+          /* March 08 */
+        }
+
+        task workshop_travel_award_nominations "Travel award nominations for workshops" {
+          task request_nominations "Request travel award nominations from organisers" {
+            allocate workshops_chair
+            depends !!review
+            effort 2h
+          }
+
+          task nomination_period "Nomination period" {
+            depends !request_nominations
+            duration 1m
+            /* Deadline extended 08 march */
+            /* closed 19 march */
+          }
+
+          task vet_applications "Vet applications" {
+            effort 20h
+            allocate workshops_chair
+            depends !nomination_period
+          }
+
+          task send_to_travel_chair "Send nominations to travel chair" {
+            allocate workshops_chair
+            effort 2h
+            depends !vet_applications
+          }
+        }
+
+        /* TODO */
         task programmme_book_info "Ask organisers to send in info for programme book" {
           allocate workshops_chair
+          effort 1h
           /* May 23 */
         }
 
-        task programmme_info_update "Confirm programme workshop info with organisers" {
+        /* TODO */
+        task programmme_info_update "Confirm programme book workshop info with organisers" {
+          effort 1h
           allocate workshops_chair
           /* June 13 */
         }
 
-        task post_conf_workshop_survey "Send out post conference workshop attendance survey" {
+        task workshop_attendance_survey "Workshop attendance survey" {
           allocate workshops_chair
-          /* June 21 */
+          task prepare "Prepare survey" {
+            depends !!notify_on_web
+            effort 2h
+          }
+
+          task email "Email survey link to registrants" {
+            /* June 21 */
+            depends !prepare
+            effort 1h
+          }
+
+          task submission_period "Survey submission period" {
+            depends !email
+            flags conference_calendar
+            duration 1w
+          }
+
+          task workshop_attendance_survey_reminder "Send out workshop attendance survey reminder" {
+            effort 1h
+            priority 800
+            depends !email {
+              onend
+              gapduration 4d
+            }
+            /* June 25 */
+          }
+
+          task assess_attendance "Assess capacity needs" {
+            effort 10h
+            depends !submission_period, !workshop_attendance_survey_reminder
+          }
         }
+
+        task workshop_room_confirmation "Send out workshop room assignments to organisers" {
+          depends !workshop_attendance_survey.assess_attendance
+          allocate workshops_chair
+          effort 2h
+          /* July 05 */
+        }
+
+        task workshop_flyers "E-mail organisers for workshop flyers" {
+          allocate workshops_chair
+          effort 2h
+          depends !workshop_room_confirmation
+          /* July 05 */
+        }
+      }
+
+      /* Programme book */
+      task programme_book "Programme book" {
+        /* allocate vp_secretary */
       }
 
       /* Miscellaneous */
@@ -877,6 +983,11 @@ textreport frame "" {
     center '<[report id="webmaster"]>'
   }
 
+  textreport "Workshops chair" {
+    formats html
+    center '<[report id="workshops_chair"]>'
+  }
+
   textreport "Elections - by task" {
     formats html
     center '<[report id="elections"]>'
@@ -919,15 +1030,6 @@ resourcereport resources "" {
   ${common_cap}
 }
 
-taskreport webmaster "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
-  hidetask ~isdutyof(webmaster, plan)
-  hideresource ~isdutyof(webmaster, plan)
-  loadunit days
-  timeformat "%a %Y-%m-%d"
-  ${common_cap}
-}
-
 taskreport president "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   hidetask ~isdutyof(president, plan)
@@ -944,6 +1046,25 @@ taskreport vicepresident "" {
   timeformat "%a %Y-%m-%d"
   ${common_cap}
 }
+
+taskreport webmaster "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(webmaster, plan)
+  hideresource ~isdutyof(webmaster, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport workshops_chair "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(workshops_chair, plan)
+  hideresource ~isdutyof(workshops_chair, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
 
 icalreport calendar "CNS2020" {
 }
