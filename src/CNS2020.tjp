@@ -553,7 +553,7 @@ task OCNS2020 "OCNS 2020" {
 
             /* Send codes to respective Board members */
             task send_vouchers "Send voucher codes to respective Board members" {
-              effort 8h
+              effort 4h
               depends !create_vouchers
             }
           }
@@ -747,15 +747,9 @@ task OCNS2020 "OCNS 2020" {
           priority 800
         }
 
-        task send_accepted_to_pub_chair "Send accepted abstracts to publication chair" {
-          depends !review_period
-          effort 8h
-          allocate programme_chair
-        }
-
         task type_assessment "Assign abstracts Oral/Poster presentations" {
           depends !acceptance_notification
-          duration 4w
+          duration 3w
           allocate programme_committee, programme_chair
         }
 
@@ -767,16 +761,21 @@ task OCNS2020 "OCNS 2020" {
           flags conference_calendar
         }
 
+        task prepare_publication_materials "Prepare publication materials" {
+          depends !type_assessment
+          allocate publication_chair
+          duration 8w
+        }
+        task send_programme_to_vp "Send material to VP for programme book" {
+          depends !prepare_publication_materials
+          allocate publication_chair
+          effort 1h
+        }
+
         task prepare_conference_programme "Prepare conference programme" {
           depends !type_notification
           allocate programme_chair
           duration 4w
-        }
-
-        task send_programme_to_vp "Send programme to VP for programme book" {
-          depends !prepare_conference_programme
-          allocate programme_chair
-          effort 1h
         }
 
         task arrange_session_chairs "Arrange session chairs from PC" {
@@ -801,7 +800,7 @@ task OCNS2020 "OCNS 2020" {
           task prepare_book "Prepare programme book" {
             allocate vp_secretary
             depends !!send_programme_to_vp
-            duration 4w
+            duration 2w
           }
 
           task send_to_webmaster "Send to webmaster" {
