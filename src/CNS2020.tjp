@@ -721,6 +721,25 @@ task OCNS2020 "OCNS 2020" {
         }
       }
 
+      /* Miscellaneous */
+      task invitation_letters "Send invitation letters" {
+        allocate travel_chair
+        depends !registration.call
+        end ${conference_end_date}
+      }
+
+      task invoices "Send invoices" {
+        allocate treasurer
+        depends !registration.call
+        end ${conference_end_date}
+      }
+
+      task registration_queries "Reply to registration queries" {
+        allocate registration_chair
+        depends !registration.call
+        end ${conference_end_date}
+      }
+
 
       /* Conference */
       task Conference "Conference: Melbourne" {
@@ -813,17 +832,17 @@ textreport frame "" {
     center '<[report id="overview"]>'
   }
 
-  textreport "Overview - with chart" {
+  textreport "President" {
     formats html
-    center '<[report id="chart"]>'
+    center '<[report id="president"]>'
   }
 
-  textreport "Overview - by resources" {
+  textreport "VP-Secretary" {
     formats html
-    center '<[report id="resources"]>'
+    center '<[report id="vicepresident"]>'
   }
 
-  textreport "Webmaster tasks" {
+  textreport "Webmaster" {
     formats html
     center '<[report id="webmaster"]>'
   }
@@ -874,6 +893,23 @@ taskreport webmaster "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   hidetask ~isdutyof(webmaster, plan)
   hideresource ~isdutyof(webmaster, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport president "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(president, plan)
+  hideresource ~isdutyof(president, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+taskreport vicepresident "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(vp_secretary, plan)
+  hideresource ~isdutyof(vp_secretary, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
