@@ -480,13 +480,14 @@ task OCNS2020 "OCNS 2020" {
 
             /* Check that membership form is up to date */
             task check_form "Check membership form" {
-              effort 2h
+              start 2019-12-01
+              effort 1h
             }
 
             /* Check and update if needed */
             task check_pricing "Check membership rates" {
               depends !check_form
-              effort 4h
+              effort 2h
             }
           }
 
@@ -497,12 +498,18 @@ task OCNS2020 "OCNS 2020" {
             /* Remember to set it to close at end of conference */
             task copy_over "Copy over form" {
               depends !!membership_form.check_pricing
-              effort 4h
+              start 2019-12-01
+              effort 1h
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
-              effort 4h
+              effort 2h
               depends !copy_over
+            }
+
+            task open_form "Open the form" {
+              effort 0.5h
+              depends !check_pricing
             }
           }
 
@@ -510,13 +517,17 @@ task OCNS2020 "OCNS 2020" {
           task add_to_registration_form "Add to registration form" {
             /* Copy over registration form */
             task copy_over "Copy over form" {
-              depends !!membership_form.check_pricing
-              effort 4h
+              start 2019-12-01
+              effort 1h
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
-              effort 4h
+              effort 2h
               depends !copy_over
+            }
+            task open_form "Open the form" {
+              effort 0.5h
+              depends !check_pricing
             }
           }
 
@@ -524,13 +535,17 @@ task OCNS2020 "OCNS 2020" {
           task add_extras_form "Add extras form" {
             /* Copy over registration form */
             task copy_over "Copy over form" {
-              depends !!membership_form.check_pricing
-              effort 4h
+              start 2019-12-01
+              effort 1h
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
-              effort 4h
+              effort 2h
               depends !copy_over
+            }
+            task open_form "Open the form" {
+              effort 0.5h
+              depends !check_pricing
             }
           }
 
@@ -540,13 +555,13 @@ task OCNS2020 "OCNS 2020" {
             /* Confirm what vouchers are needed */
             task confirm_requirements "Confirm what vouchers are required" {
               allocate board
-              duration 1w
-              depends !!add_extras_form
+              duration 2d
+              depends !!add_extras_form, !!add_to_registration_form, !!registration_form
             }
 
             task create_vouchers "Create the required voucher codes" {
               allocate webmaster
-              duration 1w
+              effort 4h
               depends !confirm_requirements
             }
 
@@ -659,6 +674,7 @@ task OCNS2020 "OCNS 2020" {
 
         task call "Call for registrations" {
           allocate vp_secretary
+          maxstart 2020-01-15
           effort 0.5d
         }
 
