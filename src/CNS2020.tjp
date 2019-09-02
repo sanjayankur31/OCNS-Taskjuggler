@@ -763,12 +763,12 @@ task OCNS2020 "OCNS 2020" {
 
         task prepare_publication_materials "Prepare publication materials" {
           depends !type_assessment
-          allocate publication_chair
+          allocate publication_chair, programme_chair
           duration 8w
         }
         task send_programme_to_vp "Send material to VP for programme book" {
           depends !prepare_publication_materials
-          allocate publication_chair
+          allocate publication_chair, programme_chair
           effort 1h
         }
 
@@ -798,7 +798,7 @@ task OCNS2020 "OCNS 2020" {
 
         task programme_book "Programme book" {
           task prepare_book "Prepare programme book" {
-            allocate vp_secretary
+            allocate vp_secretary, publication_chair, programme_chair
             depends !!send_programme_to_vp
             duration 2w
           }
@@ -1259,6 +1259,10 @@ textreport frame "" {
     center '<[report id="programme"]>'
   }
 
+  textreport "Publication" {
+    formats html
+    center '<[report id="publication"]>'
+  }
 
   textreport "Web" {
     formats html
@@ -1328,6 +1332,15 @@ taskreport programme "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   hidetask ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
   hideresource ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport publication "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(publication_chair, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(publication_chair, plan) & ~isdutyof(board, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
