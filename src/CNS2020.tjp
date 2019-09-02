@@ -437,19 +437,23 @@ task OCNS2020 "OCNS 2020" {
         /* Check mailing lists */
         task mailing_list_check "Check that the mailing lists are up to date" {
           depends !access_check
-          duration 2d
+          effort 8h
         }
 
         /* Copy over web content */
         task copy_pages "Copy over all 2019 pages to 2020" {
           effort 8h
-          depends !mailing_list_check
         }
 
         /* Update menu links */
         task update_menu_links "Update links in main menu" {
           effort 6h
           depends !copy_pages
+        }
+
+        task update_links "Update site links on main CNS page" {
+          effort 5h
+          depends !copy_pages, !forms
         }
 
         /* Also remove permissions from old pages: archived */
@@ -461,11 +465,6 @@ task OCNS2020 "OCNS 2020" {
         task update_home_page_meeting_edit "Update home page of meeting edit group to new CNS page" {
           effort 2h
           depends !update_permissions
-        }
-
-        task update_links "Update site links on main CNS page" {
-          effort 5h
-          depends !copy_pages
         }
 
         task update_board_pages "Update Board/Committee pages and archive old ones" {
