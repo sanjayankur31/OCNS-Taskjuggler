@@ -154,7 +154,6 @@ resource board "OCNS Board" {
   limits { dailymax 2h weeklymax 6h }
 
   }
-
 }
 
 /* Programme committee */
@@ -711,13 +710,16 @@ task OCNS2020 "OCNS 2020" {
         start 2019-12-15
 
         task call "Call for submissions" {
-          allocate vp_secretary
+          allocate workshops_chair
+          flags conference_calendar
           /* 17 Dec in 2019 */
           effort 0.5d
         }
 
         task submissions "Submission period" {
           depends !call
+          allocate workshops_chair
+          flags conference_calendar
           duration 1m
         }
 
@@ -727,8 +729,9 @@ task OCNS2020 "OCNS 2020" {
           duration 1m
         }
 
-        task acceptance "Send out acceptance e-mails" {
+        task acceptance "Notification of workshop acceptance" {
           allocate workshops_chair
+          flags conference_calendar
           depends !review
           effort 4h
           /* Feb 21 in 2019 */
@@ -751,21 +754,22 @@ task OCNS2020 "OCNS 2020" {
         task put_list_on_website "Put workshop list on website" {
           depends !acceptance
           allocate workshops_chair
-          effort 8h
+          effort 12h
         }
 
         task notify_on_web "Notify organisers of list being posted on website" {
           depends !put_list_on_website
           allocate workshops_chair
-          effort 2h
+          effort 0.5h
           /* March 08 */
         }
 
         task workshop_travel_award_nominations "Travel award nominations for workshops" {
           task request_nominations "Request travel award nominations from organisers" {
             allocate workshops_chair
-            depends !!review
-            effort 2h
+            depends !!acceptance
+            priority 800
+            effort 0.5h
           }
 
           task nomination_period "Nomination period" {
@@ -812,6 +816,7 @@ task OCNS2020 "OCNS 2020" {
           task email "Email survey link to registrants" {
             /* June 21 */
             depends !prepare
+            flags conference_calendar
             effort 1h
           }
 
@@ -819,6 +824,7 @@ task OCNS2020 "OCNS 2020" {
             depends !email
             flags conference_calendar
             duration 1w
+            flags conference_calendar
           }
 
           task workshop_attendance_survey_reminder "Send out workshop attendance survey reminder" {
@@ -915,12 +921,14 @@ task OCNS2020 "OCNS 2020" {
           start ${conference_end_date}
           allocate vp_secretary
           effort 0.5d
+          flags conference_calendar
         }
 
         /* Submission period */
         task survey_submissions "Survey submission period" {
           depends !call
           end 2020-09-07
+          flags conference_calendar
         }
       }
 
@@ -932,10 +940,12 @@ task OCNS2020 "OCNS 2020" {
           start ${conference_end_date}
           allocate vp_secretary
           effort 0.5d
+          flags conference_calendar
         }
 
         /* Submission period */
         task poster_submissions "Poster submission period" {
+          flags conference_calendar
           depends !call
           end 2020-09-07
         }
@@ -1032,16 +1042,16 @@ resourcereport resources "" {
 
 taskreport president "" {
   columns bsi {title 'WBS'}, name, start, end, duration
-  hidetask ~isdutyof(president, plan)
-  hideresource ~isdutyof(president, plan)
+  hidetask ~isdutyof(president, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(president, plan) & ~isdutyof(board, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
 }
 taskreport vicepresident "" {
   columns bsi {title 'WBS'}, name, start, end, duration
-  hidetask ~isdutyof(vp_secretary, plan)
-  hideresource ~isdutyof(vp_secretary, plan)
+  hidetask ~isdutyof(vp_secretary, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(vp_secretary, plan) & ~isdutyof(board, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
@@ -1049,8 +1059,8 @@ taskreport vicepresident "" {
 
 taskreport webmaster "" {
   columns bsi {title 'WBS'}, name, start, end, duration
-  hidetask ~isdutyof(webmaster, plan)
-  hideresource ~isdutyof(webmaster, plan)
+  hidetask ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
@@ -1058,8 +1068,8 @@ taskreport webmaster "" {
 
 taskreport workshops_chair "" {
   columns bsi {title 'WBS'}, name, start, end, duration
-  hidetask ~isdutyof(workshops_chair, plan)
-  hideresource ~isdutyof(workshops_chair, plan)
+  hidetask ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
