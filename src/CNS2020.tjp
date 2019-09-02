@@ -719,6 +719,36 @@ task OCNS2020 "OCNS 2020" {
           depends !call
           end 2020-01-31
         }
+
+        task workshops_on_website ""
+
+        task workshop_travel_award_nominations "Travel award nominations for workshops" {
+          task nomination_period "Nomination period" {
+            /* Deadline extended 08 march */
+            /* closed 19 march */
+
+          }
+        }
+
+        task workshop_schedule "Send out workshop schedule and room assignments to organisers" {
+          allocate workshops_chair
+          /* May 01 */
+        }
+
+        task programmme_book_info "Ask organisers to send in info for programme book" {
+          allocate workshops_chair
+          /* May 23 */
+        }
+
+        task programmme_info_update "Confirm programme workshop info with organisers" {
+          allocate workshops_chair
+          /* June 13 */
+        }
+
+        task post_conf_workshop_survey "Send out post conference workshop attendance survey" {
+          allocate workshops_chair
+          /* June 21 */
+        }
       }
 
       /* Miscellaneous */
