@@ -595,15 +595,41 @@ task OCNS2020 "OCNS 2020" {
       task confmaster "Confmaster" {
         allocate programme_chair
 
-        task check_confmaster "Check confmaster" {
+        task prepare_confmaster "Prepare confmaster" {
           duration 6w
         }
 
         task confmaster_freeze "Freeze confmaster deployment" {
-          depends !check_confmaster
+          depends !prepare_confmaster
           duration 1w
         }
+      }
 
+      /* Key notes */
+      task get_keynote_speakers "Identify and invite key note speakers" {
+        allocate programme_chair
+        end 2020-06-01
+      }
+
+
+      /* Programm committee */
+      task call_for_programmee_committee_volunteers "Call for programme committee volunteers for next year" {
+        allocate programme_chair
+        start 2020-06-28
+        effort 1h
+      }
+
+      task invite_new_reviewers "Invite and confirm new reviewers" {
+        allocate programme_chair
+        depends OCNS2020.conference_tasks.pre_conference.confmaster.confmaster_freeze {
+          onend
+        }
+        effort 20h
+      }
+      task update_confmaster_access "Update Access list on Confmaster" {
+        depends !invite_new_reviewers
+        allocate programme_chair
+        effort 4h
       }
     }
 
@@ -656,6 +682,7 @@ task OCNS2020 "OCNS 2020" {
         /* Open confmaster for submissions */
         task confmaster_open "Open Confmaster for submissions" {
           allocate programme_chair
+          depends OCNS2020.conference_tasks.pre_conference.confmaster.confmaster_freeze
           effort 1d
         }
 
@@ -674,25 +701,96 @@ task OCNS2020 "OCNS 2020" {
           flags conference_calendar
         }
 
-        task acceptance_notification "Notification of abstract acceptance" {
-          start 2020-04-10
-          effort 1d
-          allocate programme_chair
-          flags conference_calendar
-        }
-
         /* Close confmaster */
         task close_confmaster "Close Confmaster for submissions" {
           depends !submissions
           allocate programme_chair
-          effort 1d
+          effort 1h
         }
 
-        task type_notification "Notification of Oral/Poster presentation" {
-          start 2020-05-01
+        task assign_reviewers "Assign reviewers" {
+          depends !close_confmaster
+          allocate programme_committee
+          effort 4h
+        }
+
+        task review_period "Review abstracts" {
+          depends !assign_reviewers
+          allocate programme_committee, abstract_review_committee, programme_chair
+          duration 4w
+        }
+
+        task acceptance_notification "Notification of abstract acceptance" {
+          depends !review_period
+          /* start 2020-04-10 */
           effort 1d
           allocate programme_chair
           flags conference_calendar
+          priority 800
+        }
+
+        task type_assessment "Assign abstracts Oral/Poster presentations" {
+          depends !acceptance_notification
+          duration 4w
+          allocate programme_committee, programme_chair
+        }
+
+
+        task type_notification "Notification of Oral/Poster presentation" {
+          depends !type_assessment
+          effort 1d
+          allocate programme_chair
+          flags conference_calendar
+        }
+
+        task prepare_conference_programme "Prepare conference programme" {
+          depends !type_notification
+          allocate programme_chair
+          duration 4w
+        }
+
+        task send_programme_to_vp "Send programme to VP for programme book" {
+          depends !prepare_conference_programme
+          allocate programme_chair
+          effort 1h
+        }
+
+        task arrange_session_chairs "Arrange session chairs from PC" {
+          depends !send_programme_to_vp
+          effort 6h
+          allocate programme_chair
+        }
+
+        task notify_webmaster_poster_schedule "Send poster schedule to webmaster" {
+          allocate programme_chair
+          depends !prepare_conference_programme
+          effort 1h
+        }
+
+        task add_poster_schedule_to_website "Add poster schedule on the website" {
+          allocate webmaster
+          depends !notify_webmaster_poster_schedule
+          effort 4h
+        }
+
+        task programme_book "Programme book" {
+          task prepare_book "Prepare programme book" {
+            allocate vp_secretary
+            depends !!send_programme_to_vp
+            duration 4w
+          }
+
+          task send_to_webmaster "Send to webmaster" {
+            allocate vp_secretary
+            depends !prepare_book
+            effort 1h
+          }
+
+          task publish_programme_book "Publish" {
+            allocate webmaster
+            effort 1h
+            depends !send_to_webmaster
+          }
         }
       }
 
@@ -956,11 +1054,6 @@ task OCNS2020 "OCNS 2020" {
         }
       }
 
-      /* Programme book */
-      task programme_book "Programme book" {
-        /* allocate vp_secretary */
-      }
-
       /* Miscellaneous */
       task invitation_letters "Send invitation letters" {
         allocate travel_chair
@@ -982,34 +1075,70 @@ task OCNS2020 "OCNS 2020" {
 
 
       /* Conference */
-      task Conference "Conference: Melbourne" {
+      task melbourne "Conference: Melbourne" {
         start ${conference_start_date}
-        flags conference_calendar
 
+        /* Conference events */
         task board_meeting "Board meeting" {
           start ${conference_start_date}
-          effort 1d
-          allocate board
+          flags conference_calendar
+          duration 1d
+        }
+
+        task pc_meeting "Programme committee meeting" {
+          flags conference_calendar
+          duration 1d
+          depends !board_meeting
+        }
+
+        task meet_pc_volunteers "Interview/meet programme committee volunteers" {
+          allocate programme_chair
+          depends !pc_meeting
+          duration 1d
         }
 
         task tutorials "Tutorials" {
           start ${conference_start_date}
+          flags conference_calendar
           duration 1d
         }
 
         task main_meeting "Main meeting" {
           depends !tutorials
+          flags conference_calendar
           duration 3d
         }
 
         task workshops "Workshops" {
           end ${conference_end_date}
+          flags conference_calendar
           duration 1.5d
         }
       }
     }
     /* Post conference */
     task post_conference "Post-conference" {
+      start ${conference_end_date}
+
+      task programme_committee "Programme committee" {
+        task select_new_committee "Select programme committee for next year" {
+          depends OCNS2020.conference_tasks.conference.melbourne
+          allocate programme_chair
+          duration 4w
+        }
+
+        task notify_webmaster_mail_group "Notify webmaster to create new mailing group" {
+          depends !select_new_committee
+          allocate programme_chair
+          effort 1h
+        }
+
+        task create_new_mail_group "Create new mailing group" {
+          allocate webmaster
+          effort 2h
+          depends !notify_webmaster_mail_group
+        }
+      }
 
       /* Conference survey */
       task conference_survey "Conference survey" {
@@ -1096,19 +1225,25 @@ textreport frame "" {
     center '<[report id="vicepresident"]>'
   }
 
-  textreport "Webmaster" {
+  textreport "Programme" {
     formats html
-    center '<[report id="webmaster"]>'
+    center '<[report id="programme"]>'
   }
 
-  textreport "Workshops chair" {
+
+  textreport "Web" {
     formats html
-    center '<[report id="workshops_chair"]>'
+    center '<[report id="web"]>'
   }
 
-  textreport "Tutorials chair" {
+  textreport "Workshops" {
     formats html
-    center '<[report id="tutorials_chair"]>'
+    center '<[report id="workshops"]>'
+  }
+
+  textreport "Tutorials" {
+    formats html
+    center '<[report id="tutorials"]>'
   }
 
   textreport "Conference calendar" {
@@ -1160,7 +1295,16 @@ taskreport vicepresident "" {
   ${common_cap}
 }
 
-taskreport webmaster "" {
+taskreport programme "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
+  hideresource ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport web "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   hidetask ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
@@ -1169,7 +1313,7 @@ taskreport webmaster "" {
   ${common_cap}
 }
 
-taskreport workshops_chair "" {
+taskreport workshops "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   hidetask ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
@@ -1178,7 +1322,7 @@ taskreport workshops_chair "" {
   ${common_cap}
 }
 
-taskreport tutorials_chair "" {
+taskreport tutorials "" {
   columns bsi {title 'WBS'}, name, start, end, duration
   hidetask ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
