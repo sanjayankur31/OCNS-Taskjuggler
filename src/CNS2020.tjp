@@ -207,7 +207,7 @@ task OCNS2020 "OCNS 2020" {
 
     task call "Call for candidate directors" {
       allocate vp_secretary
-      start 2019-09-01
+      start 2019-09-07
       effort 2h
     }
 
@@ -226,8 +226,8 @@ task OCNS2020 "OCNS 2020" {
     }
 
     task nomination_period "Nomination period" {
-      start 2019-09-01
-      end 2019-10-01
+      depends !call
+      duration 1m
     }
 
     task send_candidates_for_checks "Send candidates to Nomination Committee" {
@@ -480,14 +480,15 @@ task OCNS2020 "OCNS 2020" {
 
             /* Check that membership form is up to date */
             task check_form "Check membership form" {
-              start 2019-12-01
               effort 1h
+              complete 100
             }
 
             /* Check and update if needed */
             task check_pricing "Check membership rates" {
               depends !check_form
               effort 2h
+              complete 100
             }
           }
 
@@ -1288,9 +1289,9 @@ textreport frame "" {
 
 taskreport overview "" {
   header -8<-
-  An ical of the whole plan is available [CNS2020.ics here].
+  An ical of the whole plan is available [CNS2020.ics here]. Taskjuggler sources are [https://github.com/sanjayankur31/2020-CNS-Taskjuggler here].
   ->8-
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
@@ -1313,7 +1314,7 @@ resourcereport resources "" {
 }
 
 taskreport president "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(president, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(president, plan) & ~isdutyof(board, plan)
   loadunit days
@@ -1321,7 +1322,7 @@ taskreport president "" {
   ${common_cap}
 }
 taskreport vicepresident "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(vp_secretary, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(vp_secretary, plan) & ~isdutyof(board, plan)
   loadunit days
@@ -1330,7 +1331,7 @@ taskreport vicepresident "" {
 }
 
 taskreport programme "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
   hideresource ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
   loadunit days
@@ -1339,7 +1340,7 @@ taskreport programme "" {
 }
 
 taskreport publication "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(publication_chair, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(publication_chair, plan) & ~isdutyof(board, plan)
   loadunit days
@@ -1348,7 +1349,7 @@ taskreport publication "" {
 }
 
 taskreport web "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
   loadunit days
@@ -1357,7 +1358,7 @@ taskreport web "" {
 }
 
 taskreport workshops "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
   loadunit days
@@ -1366,7 +1367,7 @@ taskreport workshops "" {
 }
 
 taskreport tutorials "" {
-  columns bsi {title 'WBS'}, name, start, end, duration
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
   hidetask ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
   hideresource ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
   loadunit days
@@ -1379,7 +1380,7 @@ icalreport calendar "CNS2020" {
 
 /* Elections */
 taskreport elections "" {
-  columns name, start, end, duration
+  columns name, start, end, duration, complete
   hidetask ~elections
   loadunit days
   timeformat "%a %Y-%m-%d"
