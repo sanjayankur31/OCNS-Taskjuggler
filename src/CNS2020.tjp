@@ -695,13 +695,105 @@ task OCNS2020 "OCNS 2020" {
         start 2019-12-15
 
         task call "Call for submissions" {
-          allocate vp_secretary
+          allocate tutorials_chair
+          flags conference_calendar
           effort 0.5d
         }
 
         task submissions "Submission period" {
           depends !call
+          flags conference_calendar
           end 2020-01-31
+        }
+
+        task review "Review tutorial proposals" {
+          depends !submissions
+          allocate tutorials_chair
+          duration 1m
+        }
+
+        task acceptance "Notification of tutorials acceptance" {
+          allocate tutorials_chair
+          flags conference_calendar
+          depends !review
+          effort 4h
+          /* Feb 21 in 2019 */
+        }
+
+        task notify_schedule "Send out tutorial day schedule to organisers" {
+          allocate tutorials_chair
+          depends !acceptance
+          effort 2h
+          /* May 01 */
+        }
+
+        task put_list_on_website "Put tutorial list on website" {
+          depends !acceptance
+          allocate tutorials_chair
+          effort 12h
+        }
+
+        task notify_on_web "Notify organisers of list being posted on website" {
+          depends !put_list_on_website
+          allocate tutorials_chair
+          effort 0.5h
+          /* March 08 */
+        }
+
+        task tutorial_attendance_survey "Tutorials attendance survey" {
+          allocate tutorials_chair
+          task prepare "Prepare survey" {
+            depends !!notify_on_web
+            effort 2h
+          }
+
+          task email "Email survey link to registrants" {
+            /* June 24 */
+            depends !prepare
+            flags conference_calendar
+            effort 1h
+          }
+
+          task submission_period "Survey submission period" {
+            depends !email
+            duration 1w
+            flags conference_calendar
+          }
+
+          task tutorial_attendance_survey_reminder "Send out tutorial attendance survey reminder" {
+            effort 1h
+            priority 800
+            depends !email {
+              onend
+              gapduration 4d
+            }
+          }
+
+          task assess_attendance "Assess capacity needs" {
+            effort 10h
+            depends !submission_period, !tutorial_attendance_survey_reminder
+          }
+        }
+
+        task tutorial_room_confirmation "Send out tutorial room assignments to organisers" {
+          depends !tutorial_attendance_survey.assess_attendance
+          allocate tutorials_chair
+          effort 2h
+          /* July 05 */
+        }
+
+        /* TODO */
+        task programmme_book_info "Ask organisers to send in info for programme book" {
+          allocate tutorials_chair
+          effort 1h
+          /* May 23 */
+        }
+
+        /* TODO */
+        task programmme_info_update "Confirm programme book tutorial info with organisers" {
+          effort 1h
+          allocate tutorials_chair
+          /* June 13 */
         }
       }
 
@@ -978,6 +1070,16 @@ textreport frame "" {
     center '<[report id="overview"]>'
   }
 
+  textreport "Elections - by task" {
+    formats html
+    center '<[report id="elections"]>'
+  }
+
+  textreport "Elections - by resources" {
+    formats html
+    center '<[report id="elections_resources"]>'
+  }
+
   textreport "President" {
     formats html
     center '<[report id="president"]>'
@@ -998,14 +1100,9 @@ textreport frame "" {
     center '<[report id="workshops_chair"]>'
   }
 
-  textreport "Elections - by task" {
+  textreport "Tutorials chair" {
     formats html
-    center '<[report id="elections"]>'
-  }
-
-  textreport "Elections - by resources" {
-    formats html
-    center '<[report id="elections_resources"]>'
+    center '<[report id="tutorials_chair"]>'
   }
 
   textreport "Conference calendar" {
@@ -1075,6 +1172,14 @@ taskreport workshops_chair "" {
   ${common_cap}
 }
 
+taskreport tutorials_chair "" {
+  columns bsi {title 'WBS'}, name, start, end, duration
+  hidetask ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
 
 icalreport calendar "CNS2020" {
 }
