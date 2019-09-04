@@ -194,16 +194,30 @@ task OCNS2020 "OCNS 2020" {
     flags elections
     start 2019-08-25
 
-    /* A two person committee is required */
+    /* A minimum of three people are required on the committee */
     task create_nomination_committee "Create Nomination Committee" {
       allocate president
       effort 6h
+      complete 100
+    }
+
+    task update_elist "Update the e-list with new members of nomination committee" {
+      allocate webmaster
+      effort 1h
+      complete 100
+
+      journalentry 2019-09-04 "Updated" {
+        author webmaster
+        summary "Created, e-mail sent to inform its members"
+      }
     }
 
     task prepare_form "Copy over and open candidancy form" {
       allocate webmaster
       effort 2h
+      complete 100
     }
+
 
     task call "Call for candidate directors" {
       allocate vp_secretary
