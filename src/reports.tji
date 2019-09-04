@@ -190,10 +190,12 @@ taskreport conference_calendar "" {
 }
 
 taskreport web_journal "" {
-  columns bsi {title 'WBS'}, name, journal {width 350}
+  columns bsi {title 'WBS'}, name {width 400}, journal {width 500}
   loadunit days
   timeformat "%a %Y-%m-%d"
-  journalmode status_up
+  hidetask ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
+  journalmode journal
   journalattributes headline, author, date, summary, details
   ${common_cap}
 }
