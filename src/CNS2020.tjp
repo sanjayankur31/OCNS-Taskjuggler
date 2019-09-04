@@ -206,9 +206,9 @@ task OCNS2020 "OCNS 2020" {
       effort 1h
       complete 100
 
-      journalentry 2019-09-04 "Updated" {
+      journalentry 2019-09-04 "Done" {
         author webmaster
-        summary "Created, e-mail sent to inform its members"
+        summary "Created, e-mail sent to inform nomination committee"
       }
     }
 
@@ -216,6 +216,12 @@ task OCNS2020 "OCNS 2020" {
       allocate webmaster
       effort 2h
       complete 100
+      journalentry 2019-09-02 "Created" {
+        author webmaster
+      }
+      journalentry 2019-09-04 "Sent to committee" {
+        author webmaster
+      }
     }
 
 
