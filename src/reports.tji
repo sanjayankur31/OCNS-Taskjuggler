@@ -1,0 +1,200 @@
+/* Reports: navbar */
+navigator navbar {
+  hidereport @none
+}
+
+/* Default report that includes all the reports in it */
+textreport frame "" {
+  header -8<-
+  == OCNS 2019-2020 ==
+  <[navigator id="navbar"]>
+  ->8-
+  footer "----"
+  textreport index "Overview - by tasks" {
+    formats html
+    center '<[report id="overview"]>'
+  }
+
+  textreport "Elections - by task" {
+    formats html
+    center '<[report id="elections"]>'
+  }
+
+  textreport "Elections - by resources" {
+    formats html
+    center '<[report id="elections_resources"]>'
+  }
+
+  textreport "President" {
+    formats html
+    center '<[report id="president"]>'
+  }
+
+  textreport "VP-Secretary" {
+    formats html
+    center '<[report id="vicepresident"]>'
+  }
+
+  textreport "Programme" {
+    formats html
+    center '<[report id="programme"]>'
+  }
+
+  textreport "Publication" {
+    formats html
+    center '<[report id="publication"]>'
+  }
+
+  textreport "Web" {
+    formats html
+    center '<[report id="web"]>'
+  }
+
+  textreport "Workshops" {
+    formats html
+    center '<[report id="workshops"]>'
+  }
+
+  textreport "Tutorials" {
+    formats html
+    center '<[report id="tutorials"]>'
+  }
+
+  textreport "Conference calendar" {
+    formats html
+    center '<[report id="conference_calendar"]>'
+  }
+
+  textreport "Webmaster journal" {
+    formats html
+    center '<[report id="web_journal"]>'
+  }
+}
+
+taskreport overview "" {
+  header -8<-
+  An ical of the whole plan is available [CNS2020.ics here]. Taskjuggler sources are [https://github.com/sanjayankur31/2020-CNS-Taskjuggler here].
+  ->8-
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport chart "" {
+  columns name, chart
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+resourcereport resources "" {
+  columns name, start, end, duration
+  hidetask @none
+  sortresources effort.down
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport president "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(president, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(president, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+taskreport vicepresident "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(vp_secretary, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(vp_secretary, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport programme "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
+  hideresource ~isdutyof(programme_chair, plan) & ~isdutyof(board, plan) & ~isdutyof(programme_committee, plan) & ~isdutyof(abstract_review_committee, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport publication "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(publication_chair, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(publication_chair, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport web "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport workshops "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(workshops_chair, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport tutorials "" {
+  columns bsi {title 'WBS'}, name, start, end, duration, complete
+  hidetask ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
+  hideresource ~isdutyof(tutorials_chair, plan) & ~isdutyof(board, plan)
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+icalreport calendar "CNS2020" {
+}
+
+/* Elections */
+taskreport elections "" {
+  columns name, start, end, duration, complete
+  hidetask ~elections
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+resourcereport elections_resources "" {
+  columns name, start, end, duration
+  hidetask ~elections
+  sortresources effort.down
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+/* Conference */
+taskreport conference_calendar "" {
+  columns name, start, end
+  hidetask ~conference_calendar
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  ${common_cap}
+}
+
+taskreport web_journal "" {
+  columns bsi {title 'WBS'}, name, journal {width 350}
+  loadunit days
+  timeformat "%a %Y-%m-%d"
+  journalmode status_up
+  journalattributes headline, author, date, summary, details
+  ${common_cap}
+}
+
