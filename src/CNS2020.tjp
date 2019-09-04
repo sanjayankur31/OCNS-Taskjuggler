@@ -427,13 +427,38 @@ task OCNS2020 "OCNS 2020" {
         /* Check everyone has credentials */
         task credentials_check "Check that everyone has required credentials" {
           depends OCNS2020.director_elections
-          effort 10h
+
+          task local_team "Local organisation team" {
+            effort 1h
+            complete 100
+            journalentry 2019-09-04 "Sent to LOC lead" {
+              author webmaster
+            }
+          }
+
+          task program_chair "Program chair" {
+            effort 1h
+            complete 100
+          }
         }
 
         /* Check all groups are up to date */
         task groups_check "Check all group memberships" {
           depends !credentials_check
-          effort 10h
+
+          task program_committee "Program committee" {
+            complete 100
+            effort 1h
+          }
+
+          task local_team "Local organisation team" {
+            effort 1h
+            complete 10
+            journalentry 2019-09-04 "Group created" {
+              author webmaster
+            }
+
+          }
         }
       }
 
@@ -445,19 +470,41 @@ task OCNS2020 "OCNS 2020" {
         /* Check everyone has credentials */
         task credentials_check "Check that everyone has required credentials" {
           depends OCNS2020.director_elections
-          effort 4d
-        }
 
-        /* Check everyone has access */
-        task access_check "Check that everyone has required access" {
-          depends !credentials_check
-          effort 4h
+          task local "Local organisers" {
+            effort 1h
+            complete 100
+            journalentry 2019-09-04 "Sent" {
+              author webmaster
+            }
+          }
+
+          task treasurer "Treasurer" {
+            effort 1h
+            complete 100
+          }
+
+          task workshop_chair "Workshop chair" {
+            effort 1h
+          }
+
+          task tutorial_chair "Tutorial chair" {
+            effort 1h
+          }
+
+          task member_approval "Member approval chair" {
+            effort 1h
+          }
+
+          task registration_chair "Registration chair" {
+            effort 1h
+          }
         }
 
         /* Check mailing lists */
         task mailing_list_check "Check that the mailing lists are up to date" {
-          depends !access_check
-          effort 8h
+          depends !credentials_check
+          effort 3h
         }
 
         /* Copy over web content */
