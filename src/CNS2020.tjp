@@ -508,35 +508,39 @@ task OCNS2020 "OCNS 2020" {
         }
 
         /* Copy over web content */
-        task copy_pages "Copy over all 2019 pages to 2020" {
-          effort 8h
-        }
+        task webcontent "Web content" {
+          task copy_pages "Copy over all 2019 pages to 2020" {
+            effort 8h
+          }
 
-        /* Update menu links */
-        task update_menu_links "Update links in main menu" {
-          effort 6h
-          depends !copy_pages
-        }
+          /* Also remove permissions from old pages: archived */
+          task update_permissions "Ensure meetingedit group has access to new pages" {
+            effort 2h
+            depends !copy_pages
+          }
 
-        task update_links "Update site links on main CNS page" {
-          effort 5h
-          depends !copy_pages, !forms
-        }
+          task update_home_page_meeting_edit "Update home page of meeting edit group to new CNS page" {
+            effort 2h
+            depends !update_permissions
+          }
 
-        /* Also remove permissions from old pages: archived */
-        task update_permissions "Ensure meetingedit group has access to new pages" {
-          effort 2h
-          depends !copy_pages
-        }
+          /* https://ocns.memberclicks.net/board-of-directors */
+          task update_board_page "Update Board page and archive old ones" {
+            effort 1h
+            depends !copy_pages
+          }
 
-        task update_home_page_meeting_edit "Update home page of meeting edit group to new CNS page" {
-          effort 2h
-          depends !update_permissions
-        }
+          /* https://ocns.memberclicks.net/committees */
+          task update_committees_page "Update committees page and archive old one" {
+            effort 1h
+            depends !copy_pages
+          }
 
-        task update_board_pages "Update Board/Committee pages and archive old ones" {
-          effort 5h
-          depends !copy_pages
+          /* https://ocns.memberclicks.net/program-committee */
+          task update_programme_committee_page "Update Programme committee page and archive old one" {
+            effort 1h
+            depends !copy_pages
+          }
         }
 
         /* All the forms */
@@ -649,6 +653,12 @@ task OCNS2020 "OCNS 2020" {
               effort 4h
             }
           }
+        }
+
+        /* Update all the links */
+        task update_links "Update site links on main CNS page and the main menu" {
+          effort 4h
+          depends !webcontent, !forms
         }
 
         /* Membership tasks */
