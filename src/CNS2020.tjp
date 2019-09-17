@@ -1289,7 +1289,8 @@ task OCNS2020 "OCNS 2020" {
         task poster_gallery_setup "Process submissions" {
           allocate webmaster
           depends !poster_submissions
-          duration 1w
+          /* The scripts are OK, but tweaking the HTML takes time */
+          effort 6h
         }
       }
     }
