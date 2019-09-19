@@ -67,118 +67,118 @@ resource board "OCNS Board" {
 
   /* President */
   resource president "President" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
   }
 
 
   /* VP/Secretary */
   resource vp_secretary "Vice president/Secretary" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Member approval */
   resource member_approval_chair "Member approval chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Registration */
   resource registration_chair "Registration chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Webmaster */
   resource webmaster "Webmaster"{
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Travel award chair */
   resource travel_chair "Travel chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Sponsorship chair */
   resource sponsorship_chair "Sponsorship chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Education chair */
   resource education_chair "Education chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Workshops */
   resource workshops_chair "Workshop chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Tutorials */
   resource tutorials_chair "Tutorials chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Program chair */
   resource programme_chair  "Programme chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Publication chair */
   resource publication_chair "Publication chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Social media manager */
   resource social_media_chair "Social media chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Board member head of local organisers */
   resource local_organiser_chair "Local organiser chair" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 
   /* Treasurer */
   resource treasurer "OCNS treasurer" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
 
   }
 }
 
 /* Programme committee */
 resource programme_committee "Programme committee" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
   purge managers
   managers programme_chair
 }
 
 resource abstract_review_committee "Abstract review committee" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
   purge managers
   managers programme_committee
 }
 
 /* Local organisers */
 resource local_organisers "Local organisers" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
   purge managers
   managers local_organiser_chair
 }
 
 /* Nomination committee */
 resource nomination_committee "Nomination committee" {
-  limits { dailymax 2h weeklymax 6h }
+  limits { dailymax 2h weeklymax 8h }
   purge managers
   managers president
 
@@ -224,10 +224,16 @@ task OCNS2020 "OCNS 2020" {
       }
     }
 
+    /* https://www.cnsorg.org/election-procedures */
+    task update_election_procedures_page "Update election procedures page" {
+      allocate webmaster
+      effort 2h
+      depends !prepare_form, !update_elist
+    }
 
     task call "Call for candidate directors" {
       allocate vp_secretary
-      start 2019-09-07
+      start 2019-09-19
       effort 2h
     }
 
@@ -264,31 +270,32 @@ task OCNS2020 "OCNS 2020" {
 
     task setup_director_candidate_pages "Set up director candidate pages" {
       allocate webmaster
-      effort 10h
+      effort 6h
       depends !vet_candidates
     }
 
     task check_candidate_pages "Check that candidate pages are ready" {
       allocate president
-      effort 2h
+      effort 0.5h
       depends !setup_director_candidate_pages
     }
 
     task announce_candidate_pages "Announce candidate pages to members" {
       allocate vp_secretary
-      effort 2h
-      depends !check_candidate_pages
+      effort 1h
+      depends !check_candidate_pages, !open_voting_form
     }
+
     task membership_reminder "E-mail reminder of membership requirement for voting rights" {
       allocate vp_secretary
-      effort 2h
+      effort 1h
       depends !check_candidate_pages
     }
 
     task prepare_voting_form "Prepare voting form" {
-      depends !announce_candidate_pages
+      depends !setup_director_candidate_pages
       allocate webmaster
-      effort 6h
+      effort 4h
     }
 
     task open_voting_form "Open voting form" {
@@ -311,7 +318,7 @@ task OCNS2020 "OCNS 2020" {
 
     task voting_period "Voting period" {
       depends !open_voting_form
-      duration 1m
+      duration 3w
     }
 
     task election_reminder_1 "Send out first reminder" {
@@ -509,6 +516,7 @@ task OCNS2020 "OCNS 2020" {
 
         /* Copy over web content */
         task webcontent "Web content" {
+          depends !mailing_list_check
           task copy_pages "Copy over all 2019 pages to 2020" {
             effort 8h
           }
