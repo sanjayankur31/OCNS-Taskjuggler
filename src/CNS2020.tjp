@@ -396,13 +396,13 @@ task OCNS2020 "OCNS 2020" {
     task announce_results_web "Add results on home and landing web pages" {
       allocate webmaster
       effort 8h
-      depends !inform_board
+      depends !allocate_roles
     }
 
     task announce_results "Send results e-mail to members" {
       allocate vp_secretary
       effort 2h
-      depends !inform_board
+      depends !announce_results_web
     }
 
     task check_results_announced "Check that results are on the website and e-mail sent to members" {
