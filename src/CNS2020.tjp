@@ -390,7 +390,7 @@ task OCNS2020 "OCNS 2020" {
     task delete_form "Copy and delete election form" {
       allocate webmaster
       effort 2h
-      depends !inform_board
+      depends !verify_results
     }
 
     task announce_results_web "Add results on home and landing web pages" {
