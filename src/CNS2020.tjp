@@ -386,12 +386,6 @@ task OCNS2020 "OCNS 2020" {
       effort 12h
     }
 
-    task inform_board "Inform the Board" {
-      allocate president
-      depends !allocate_roles
-      effort 1h
-    }
-
     /* Delete so that all votes are deleted */
     task delete_form "Copy and delete election form" {
       allocate webmaster
