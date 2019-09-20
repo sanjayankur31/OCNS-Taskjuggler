@@ -45,7 +45,7 @@ leaves holiday "christmas" 2019-12-20 - 2020-01-15
 macro conference_start_date [ 2020-07-18 ]
 macro conference_end_date [ 2020-07-22 ]
 macro common_cap [
-  caption 'Based on 2 hours a day, and 6 a week excluding weekends. Durations include all days, not only working days.'
+  caption '2 hours/day, 8/week. Excludes weekends. Durations cover all days, not only working days.'
 
 ]
 
@@ -233,7 +233,7 @@ task OCNS2020 "OCNS 2020" {
 
     task call "Call for candidate directors" {
       allocate vp_secretary
-      start 2019-09-19
+      actual:start 2019-09-19
       effort 2h
     }
 

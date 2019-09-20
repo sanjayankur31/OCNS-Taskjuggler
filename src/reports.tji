@@ -79,6 +79,7 @@ taskreport overview "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios plan, actual
 }
 
 taskreport chart "" {
@@ -139,6 +140,7 @@ taskreport web "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios plan, actual
 }
 
 taskreport workshops "" {
@@ -169,6 +171,7 @@ taskreport elections "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios plan, actual
 }
 
 resourcereport elections_resources "" {
@@ -198,5 +201,6 @@ taskreport web_journal "" {
   journalmode journal
   journalattributes headline, author, date, summary, details
   ${common_cap}
+  scenarios plan, actual
 }
 
