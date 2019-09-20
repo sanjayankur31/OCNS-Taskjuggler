@@ -229,6 +229,10 @@ task OCNS2020 "OCNS 2020" {
       allocate webmaster
       effort 2h
       depends !prepare_form, !update_elist
+      journalentry 2019-09-19 "Completed" {
+        author webmaster
+      }
+      actual:start 2019-09-19
     }
 
     task call "Call for candidate directors" {
