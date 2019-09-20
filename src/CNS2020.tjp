@@ -472,13 +472,15 @@ task OCNS2020 "OCNS 2020" {
       task memberclicks "Memberclicks" {
         allocate webmaster
 
+        /* Some of these depend on elections, so add deps there manually */
         /* Check everyone has credentials */
         task credentials_check "Check that everyone has required credentials" {
-          depends OCNS2020.director_elections
+          start 2020-01-01
 
           task local "Local organisers" {
             effort 1h
             complete 100
+            actual:start 2019-09-04
             journalentry 2019-09-04 "Sent" {
               author webmaster
             }
@@ -487,14 +489,29 @@ task OCNS2020 "OCNS 2020" {
           task treasurer "Treasurer" {
             effort 1h
             complete 100
+            actual:start 2019-09-02
+            journalentry 2019-09-03 "Checked" {
+              author webmaster
+            }
           }
+
 
           task workshop_chair "Workshop chair" {
             effort 1h
+            actual:start 2019-09-19
+            complete 100
+            journalentry 2019-09-19 "Done" {
+              author webmaster
+            }
           }
 
           task tutorial_chair "Tutorial chair" {
             effort 1h
+            actual:start 2019-09-19
+            complete 100
+            journalentry 2019-09-19 "Done" {
+              author webmaster
+            }
           }
 
           task member_approval "Member approval chair" {
@@ -517,6 +534,10 @@ task OCNS2020 "OCNS 2020" {
           depends !mailing_list_check
           task copy_pages "Copy over all 2019 pages to 2020" {
             effort 8h
+            complete 20
+            journalentry 2019-09-19 "Workshops and tutorial pages done" {
+              author webmaster
+            }
           }
 
           /* Also remove permissions from old pages: archived */
