@@ -79,7 +79,7 @@ taskreport overview "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
-  scenarios plan, actual
+  scenarios actual
 }
 
 taskreport chart "" {
@@ -87,15 +87,17 @@ taskreport chart "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 resourcereport resources "" {
-  columns name, start, end, duration
+  columns name, start, end, duration, complete
   hidetask @none
   sortresources effort.down
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 taskreport president "" {
@@ -105,6 +107,7 @@ taskreport president "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 taskreport vicepresident "" {
   columns bsi {title 'WBS'}, name, start, end, duration, complete
@@ -113,6 +116,7 @@ taskreport vicepresident "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 taskreport programme "" {
@@ -122,6 +126,7 @@ taskreport programme "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 taskreport publication "" {
@@ -131,6 +136,7 @@ taskreport publication "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 taskreport web "" {
@@ -150,6 +156,7 @@ taskreport workshops "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 taskreport tutorials "" {
@@ -159,6 +166,7 @@ taskreport tutorials "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
+  scenarios actual
 }
 
 icalreport calendar "CNS2020" {
@@ -171,15 +179,16 @@ taskreport elections "" {
   loadunit days
   timeformat "%a %Y-%m-%d"
   ${common_cap}
-  scenarios plan, actual
+  scenarios actual
 }
 
 resourcereport elections_resources "" {
-  columns name, start, end, duration
+  columns name, start, end, duration, complete
   hidetask ~elections
   sortresources effort.down
   loadunit days
   timeformat "%a %Y-%m-%d"
+  scenarios actual
   ${common_cap}
 }
 
@@ -189,6 +198,7 @@ taskreport conference_calendar "" {
   hidetask ~conference_calendar
   loadunit days
   timeformat "%a %Y-%m-%d"
+  scenarios actual
   ${common_cap}
 }
 
@@ -200,5 +210,6 @@ taskreport web_journal "" {
   hideresource ~isdutyof(webmaster, plan) & ~isdutyof(board, plan)
   journalmode journal
   journalattributes headline, author, date, summary, details
+  scenarios actual
   ${common_cap}
 }
