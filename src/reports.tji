@@ -201,6 +201,4 @@ taskreport web_journal "" {
   journalmode journal
   journalattributes headline, author, date, summary, details
   ${common_cap}
-  scenarios plan, actual
 }
-
