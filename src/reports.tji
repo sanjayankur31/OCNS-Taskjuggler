@@ -170,6 +170,7 @@ taskreport tutorials "" {
 }
 
 icalreport calendar "CNS2020" {
+  scenario actual
 }
 
 /* Elections */
