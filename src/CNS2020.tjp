@@ -276,6 +276,9 @@ task OCNS2020 "OCNS 2020" {
       allocate webmaster
       effort 6h
       depends !vet_candidates
+      journalentry 2019-11-04 "Created" {
+        author webmaster
+      }
     }
 
     task check_candidate_pages "Check that candidate pages are ready" {
@@ -300,12 +303,18 @@ task OCNS2020 "OCNS 2020" {
       depends !setup_director_candidate_pages
       allocate webmaster
       effort 4h
+      journalentry 2019-11-04 "Created" {
+        author webmaster
+      }
     }
 
     task open_voting_form "Open voting form" {
       depends !prepare_voting_form
       allocate webmaster
       effort 1h
+      journalentry 2019-11-04 "Created" {
+        author webmaster
+      }
     }
 
     task voting_call "Send out call for voting" {
