@@ -700,6 +700,11 @@ task OCNS2020 "OCNS 2020" {
         task update_links "Update site links on main CNS page and the main menu" {
           effort 4h
           depends !webcontent, !forms
+          complete 100
+          journalentry 2019-11-04 "Complete" {
+            author webmaster
+            summary "Was completed some time ago"
+          }
         }
 
         /* Membership tasks */
