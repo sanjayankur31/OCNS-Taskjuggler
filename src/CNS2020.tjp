@@ -576,6 +576,11 @@ task OCNS2020 "OCNS 2020" {
           task update_programme_committee_page "Update Programme committee page and archive old one" {
             effort 1h
             depends !copy_pages
+            complete 80
+            journalentry 2019-09-04 "Initial page is up" {
+              author webmaster
+              summary "Still waiting on some members to send their pictures"
+            }
           }
         }
 
