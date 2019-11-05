@@ -543,8 +543,11 @@ task OCNS2020 "OCNS 2020" {
           depends !mailing_list_check
           task copy_pages "Copy over all 2019 pages to 2020" {
             effort 8h
-            complete 20
+            complete 100
             journalentry 2019-09-19 "Workshops and tutorial pages done" {
+              author webmaster
+            }
+            journalentry 2019-10-16 "All pages copied, commented, and ready" {
               author webmaster
             }
           }
@@ -577,7 +580,11 @@ task OCNS2020 "OCNS 2020" {
             effort 1h
             depends !copy_pages
             complete 80
-            journalentry 2019-09-04 "Initial page is up" {
+            journalentry 2019-10-16 "E-mailed for updates" {
+              author webmaster
+              summary "E-mailed all members for links and pictures. Updating as they come in."
+            }
+            journalentry 2019-09-04 "Waiting" {
               author webmaster
               summary "Still waiting on some members to send their pictures"
             }
@@ -699,8 +706,8 @@ task OCNS2020 "OCNS 2020" {
         /* Update all the links */
         task update_links "Update site links on main CNS page and the main menu" {
           effort 4h
-          depends !webcontent, !forms
           complete 100
+          depends !webcontent, !forms
           journalentry 2019-11-04 "Complete" {
             author webmaster
             summary "Was completed some time ago"
@@ -735,6 +742,8 @@ task OCNS2020 "OCNS 2020" {
 
         task prepare_confmaster "Prepare confmaster" {
           duration 6w
+          actual: complete 10
+          actual: duration 10w
         }
 
         task confmaster_freeze "Freeze confmaster deployment" {
