@@ -856,6 +856,7 @@ task OCNS2020 "OCNS 2020" {
         task call "Call for submissions" {
           depends !confmaster_open
           allocate vp_secretary
+          maxstart 2020-01-15
           effort 0.5d
           flags conference_calendar
         }
