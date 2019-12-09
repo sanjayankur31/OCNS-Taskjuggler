@@ -39,7 +39,7 @@ project OCNS2020 "OCNS2020" "0.2"
 }
 
 /* Holidays/vacations */
-leaves holiday "christmas" 2019-12-20 - 2020-01-15
+leaves holiday "christmas" 2019-12-20 - 2020-01-05
 
 /* Macros */
 macro conference_start_date [ 2020-07-18 ]
@@ -92,7 +92,7 @@ resource board "OCNS Board" {
   /* Webmaster */
   resource webmaster "Webmaster"{
   limits { dailymax 2h weeklymax 8h }
-
+  leaves holiday "christmas" 2019-12-20 - 2020-01-15
   }
 
   /* Travel award chair */
@@ -805,20 +805,25 @@ task OCNS2020 "OCNS 2020" {
         depends OCNS2020.conference_tasks.pre_conference.memberclicks.forms.registration_form
         flags conference_calendar
 
+        task open "Registrations open" {
+          milestone
+          actual:start 2020-01-08
+        }
+
         task call "Call for registrations" {
+          depends !open
           allocate vp_secretary
-          maxstart 2020-01-15
-          effort 0.5d
+          effort 2h
         }
 
-        task early_registration_non_memebers "Early registration for non members" {
-          depends !call
-          end 2020-05-07
+        task early_registration_non_members "Early registration closes for non members" {
+          start 2020-05-06
+          milestone
         }
 
-        task early_registration_memebers "Early registration for members" {
-          depends !call
-          end 2020-05-15
+        task early_registration_members "Early registration closes for members" {
+          start 2020-05-15
+          milestone
         }
 
         task latest_safe_abstract "Latest safe date for membership before abstract submission ends" {
@@ -826,8 +831,8 @@ task OCNS2020 "OCNS 2020" {
           milestone
         }
 
-        task latest_safe_members "Latest safe date for membership before early registration for members ends" {
-          start 2020-05-09
+        task latest_safe_members "Latest safe date for membership applications before early registration for members ends" {
+          start 2020-05-08
           milestone
         }
       }
@@ -837,6 +842,12 @@ task OCNS2020 "OCNS 2020" {
         task submission_deadline "Submission deadline" {
           end 2020-04-04
           duration 1d
+          flags conference_calendar
+        }
+
+        task notifications "Travel award notifications" {
+          milestone
+          start 2020-05-07
           flags conference_calendar
         }
       }
@@ -849,28 +860,43 @@ task OCNS2020 "OCNS 2020" {
         task confmaster_open "Open Confmaster for submissions" {
           allocate programme_chair
           depends OCNS2020.conference_tasks.pre_conference.confmaster.confmaster_freeze
-          effort 1d
+          effort 2h
+          maxstart 2020-01-01
+        }
+
+        task open "Abstract submissions open" {
+          depends !confmaster_open
+          milestone
+          actual:start 2020-01-09
+          flags conference_calendar
         }
 
 
         task call "Call for submissions" {
-          depends !confmaster_open
+          depends !open
           allocate vp_secretary
-          maxstart 2020-01-15
-          effort 0.5d
+          maxstart 2020-01-10
+          effort 1h
           flags conference_calendar
         }
 
         task submissions "Abstract submissions period" {
-          depends !call
+          depends !open
           end 2020-03-04
+          actual:end 2020-03-04
+          flags conference_calendar
+        }
+
+        task submissions_extended "Abstract submissions extension period" {
+          depends !submissions
+          end 2020-03-11
           actual:end 2020-03-11
           flags conference_calendar
         }
 
         /* Close confmaster */
         task close_confmaster "Close Confmaster for submissions" {
-          depends !submissions
+          depends !submissions_extended
           allocate programme_chair
           effort 1h
         }
@@ -889,7 +915,7 @@ task OCNS2020 "OCNS 2020" {
 
         task acceptance_notification "Notification of abstract acceptance" {
           depends !review_period
-          /* start 2020-04-10 */
+          start 2020-04-10
           effort 1d
           allocate programme_chair
           flags conference_calendar
@@ -905,6 +931,7 @@ task OCNS2020 "OCNS 2020" {
 
         task type_notification "Notification of Oral/Poster presentation" {
           depends !type_assessment
+          start 2020-05-01
           effort 1d
           allocate programme_chair
           flags conference_calendar
