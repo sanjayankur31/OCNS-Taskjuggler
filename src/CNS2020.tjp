@@ -611,6 +611,13 @@ task OCNS2020 "OCNS 2020" {
             }
           }
 
+          /* Bump expiry dates for inactive accounts to 31st Dec 2019 so that if they renew, the expiry is set correctly */
+          task inactive_accounts "Update expiry date for inactive accounts" {
+              effort 1h
+              start 2020-01-01
+          }
+
+
           /* Prepare registration form */
           task registration_form "Registration form" {
 
