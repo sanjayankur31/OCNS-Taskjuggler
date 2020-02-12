@@ -154,6 +154,12 @@ resource board "OCNS Board" {
   limits { dailymax 2h weeklymax 8h }
 
   }
+
+  /* Newsletter chair */
+  resource newsletter_chair "Newsletter manager" {
+  limits { dailymax 2h weeklymax 8h }
+
+  }
 }
 
 /* Programme committee */
@@ -439,7 +445,7 @@ task OCNS2020 "OCNS 2020" {
         allocate webmaster
 
         /* Check everyone has credentials */
-        task credentials_check "Check that everyone has required credentials" {
+        task credentials_check "Check required credentials and email groups" {
           depends OCNS2020.director_elections
 
           task local_team "Local organisation team" {
@@ -451,6 +457,21 @@ task OCNS2020 "OCNS 2020" {
           }
 
           task program_chair "Program chair" {
+            effort 1h
+            complete 100
+          }
+
+          task workshop_chair "Workshop chair" {
+            effort 1h
+            complete 100
+          }
+
+          task tutorial_chair "Tutorial chair" {
+            effort 1h
+            complete 100
+          }
+
+          task member_approval_chair "Member approval chair" {
             effort 1h
             complete 100
           }
@@ -471,7 +492,6 @@ task OCNS2020 "OCNS 2020" {
             journalentry 2019-09-04 "Group created" {
               author webmaster
             }
-
           }
         }
       }
@@ -525,10 +545,12 @@ task OCNS2020 "OCNS 2020" {
 
           task member_approval "Member approval chair" {
             effort 1h
+            complete 100
           }
 
           task registration_chair "Registration chair" {
             effort 1h
+            complete 100
           }
         }
 
@@ -727,12 +749,14 @@ task OCNS2020 "OCNS 2020" {
           start 2019-12-01
           effort 10h
           priority 800
+          complete 100
         }
 
         task update_welcome_letter_template "Update welcome letter template" {
           start 2020-01-01
           effort 2h
           priority 800
+          complete 100
         }
       }
 
@@ -749,13 +773,14 @@ task OCNS2020 "OCNS 2020" {
 
         task prepare_confmaster "Prepare confmaster" {
           duration 6w
-          actual: complete 10
+          actual: complete 100
           actual: duration 10w
         }
 
         task confmaster_freeze "Freeze confmaster deployment" {
           depends !prepare_confmaster
           duration 1w
+          complete 100
         }
       }
 
@@ -802,6 +827,28 @@ task OCNS2020 "OCNS 2020" {
         depends !create_and_send_out_meeting_agendas
         allocate president
         effort 6h
+      }
+
+      /* Lots of tasks here */
+      task newsletter "Prepare newsletter" {
+        allocate newsletter_chair
+        start 2019-07-10
+        duration 6m
+      }
+
+      task upload_newsletter "Upload newsletter to website" {
+        # depends on when the newsletter chair has it ready, but approximately
+        depends !newsletter
+        allocate webmaster
+        effort 1h
+        start 2020-02-10
+        complete 100
+      }
+
+      task send_newsletter "Send newsletter to members" {
+        allocate vp_secretary
+        depends !update_newsletter
+        effort 1h
       }
     }
 
