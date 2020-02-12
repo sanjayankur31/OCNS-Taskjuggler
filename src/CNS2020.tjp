@@ -832,7 +832,7 @@ task OCNS2020 "OCNS 2020" {
       /* Lots of tasks here */
       task newsletter "Prepare newsletter" {
         allocate newsletter_chair
-        start 2019-07-10
+        start 2019-08-01
         duration 6m
       }
 
