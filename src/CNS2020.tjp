@@ -847,7 +847,7 @@ task OCNS2020 "OCNS 2020" {
 
       task send_newsletter "Send newsletter to members" {
         allocate vp_secretary
-        depends !update_newsletter
+        depends !upload_newsletter
         effort 1h
       }
     }
