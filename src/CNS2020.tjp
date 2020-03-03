@@ -486,6 +486,21 @@ task OCNS2020 "OCNS 2020" {
             effort 1h
           }
 
+          task workshops "Workshop organisers" {
+            complete 100
+            effort 1h
+          }
+
+          task tutorial "Tutorial organisers" {
+            complete 100
+            effort 1h
+          }
+
+          task member_approval "Member approval chairs" {
+            complete 100
+            effort 1h
+          }
+
           task local_team "Local organisation team" {
             effort 1h
             complete 10
@@ -633,13 +648,6 @@ task OCNS2020 "OCNS 2020" {
             }
           }
 
-          /* Bump expiry dates for inactive accounts to 31st Dec 2019 so that if they renew, the expiry is set correctly */
-          task inactive_accounts "Update expiry date for inactive accounts" {
-              effort 1h
-              start 2020-01-01
-          }
-
-
           /* Prepare registration form */
           task registration_form "Registration form" {
 
@@ -650,15 +658,26 @@ task OCNS2020 "OCNS 2020" {
               start 2019-12-01
               effort 1h
             }
+
+            /* all prices are copied over correctly apart from the basic contact ones. */
+            /* these need to be removed and re-added */
+            task redo_basic_contacts "Re-do basic contact prices" {
+              effort 2h
+              depends !copy_over
+              complete 100
+            }
+
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
               effort 2h
               depends !copy_over
+              complete 100
             }
 
             task open_form "Open the form" {
               effort 0.5h
               depends !check_pricing
+              complete 100
             }
           }
 
@@ -674,6 +693,12 @@ task OCNS2020 "OCNS 2020" {
               effort 2h
               depends !copy_over
             }
+            task redo_basic_contacts "Re-do basic contact prices" {
+              effort 2h
+              depends !copy_over
+              complete 100
+            }
+
             task open_form "Open the form" {
               effort 0.5h
               depends !check_pricing
@@ -686,19 +711,29 @@ task OCNS2020 "OCNS 2020" {
             task copy_over "Copy over form" {
               start 2019-12-01
               effort 1h
+              complete 100
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
               effort 2h
               depends !copy_over
+              complete 100
+            }
+            task redo_basic_contacts "Re-do basic contact prices" {
+              effort 2h
+              depends !copy_over
+              complete 100
             }
             task open_form "Open the form" {
               effort 0.5h
               depends !check_pricing
+              complete 100
             }
           }
 
           /* Vouchers */
+          /* When forms are copied over, so are vouchers, so the basic contact bits also need to be checked for these */
+          /* https://github.com/OCNS/Website/blob/SOPs/SOPs/Memberclicks/Vouchers.rst */
           task vouchers "Discount voucher codes" {
 
             /* Confirm what vouchers are needed */
@@ -717,6 +752,7 @@ task OCNS2020 "OCNS 2020" {
             /* Send codes to respective Board members */
             task send_vouchers "Send voucher codes to respective Board members" {
               effort 4h
+              complete 100
               depends !create_vouchers
             }
           }
@@ -744,7 +780,7 @@ task OCNS2020 "OCNS 2020" {
         }
 
         /* Membership tasks */
-        /* Is this needed? Should speak to Memberclicks about this */
+        /* Bump expiry dates for inactive accounts to 31st Dec 2019 so that if they renew, the expiry is set correctly */
         task update_expiration "Update expiration dates of inactive accounts" {
           start 2019-12-01
           effort 10h
@@ -753,6 +789,13 @@ task OCNS2020 "OCNS 2020" {
         }
 
         task update_welcome_letter_template "Update welcome letter template" {
+          start 2020-01-01
+          effort 2h
+          priority 800
+          complete 100
+        }
+
+        task update_approval_letter_template "Update approval letter template" {
           start 2020-01-01
           effort 2h
           priority 800
@@ -1183,6 +1226,7 @@ task OCNS2020 "OCNS 2020" {
           depends !acceptance
           /* Feb 22 */
           effort 2h
+          complete 100
         }
 
         task notify_schedule "Send out workshop day schedule to organisers" {
