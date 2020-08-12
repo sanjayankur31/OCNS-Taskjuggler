@@ -73,7 +73,7 @@ textreport frame "" {
 
 taskreport overview "" {
   header -8<-
-  An ical of the whole plan is available [CNS2021.ics here]. Taskjuggler sources are [https://github.com/sanjayankur31/2021-CNS-Taskjuggler here].
+  An ical of the whole plan is available [CNS2021.ics here]. Taskjuggler sources are [https://github.com/sanjayankur31/OCNS-Taskjuggler here].
   ->8-
   columns bsi {title 'WBS'}, name, start, end, duration, complete
   loadunit days
