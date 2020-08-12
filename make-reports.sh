@@ -14,6 +14,7 @@ rm -fv /tmp/tj3/tags
 
 # Switch to branch, copy over
 git checkout master || exit -1
+git pull origin master
 rm -rf docs && mkdir docs
 cp -vr /tmp/tj3/* ./docs/
 
@@ -25,5 +26,5 @@ popd
 # commit
 git add .
 git commit -m "Regenerate" -S
-git push
+git push -u origin master
 git checkout source && mkdir docs
