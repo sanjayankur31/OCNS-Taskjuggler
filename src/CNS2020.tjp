@@ -503,10 +503,7 @@ task OCNS2020 "OCNS 2020" {
 
           task local_team "Local organisation team" {
             effort 1h
-            complete 10
-            journalentry 2019-09-04 "Group created" {
-              author webmaster
-            }
+            complete 100
           }
         }
       }
@@ -604,19 +601,21 @@ task OCNS2020 "OCNS 2020" {
           task update_board_page "Update Board page and archive old ones" {
             effort 1h
             depends !copy_pages
+            complete 100
           }
 
           /* https://ocns.memberclicks.net/committees */
           task update_committees_page "Update committees page and archive old one" {
             effort 1h
             depends !copy_pages
+            complete 100
           }
 
           /* https://ocns.memberclicks.net/program-committee */
           task update_programme_committee_page "Update Programme committee page and archive old one" {
             effort 1h
             depends !copy_pages
-            complete 80
+            complete 100
             journalentry 2019-10-16 "E-mailed for updates" {
               author webmaster
               summary "E-mailed all members for links and pictures. Updating as they come in."
@@ -624,6 +623,10 @@ task OCNS2020 "OCNS 2020" {
             journalentry 2019-09-04 "Waiting" {
               author webmaster
               summary "Still waiting on some members to send their pictures"
+            }
+            journalentry 2020-08-12 "Was completed" {
+              author webmaster
+              summary "Was completed last year"
             }
           }
         }
@@ -764,6 +767,12 @@ task OCNS2020 "OCNS 2020" {
             /* Check that membership form is up to date */
             task update_form "Update travel award form" {
               effort 4h
+              complete 100
+
+              journalentry 2020-08-12 "Not needed" {
+                author webmaster
+                summary "No travelling this year."
+              }
             }
           }
         }
@@ -808,6 +817,12 @@ task OCNS2020 "OCNS 2020" {
         effort 3h
         allocate webmaster
         priority 100
+        complete 100
+
+        journalentry 2020-08-12 "Not needed" {
+          author webmaster
+          summary "On Sched this year."
+        }
       }
 
       /* Confmaster */
@@ -1061,12 +1076,22 @@ task OCNS2020 "OCNS 2020" {
           allocate programme_chair
           depends !prepare_conference_programme
           effort 1h
+          complete 100
+          journalentry 2020-08-12 "Not needed" {
+            author webmaster
+            summary "No travelling this year."
+          }
         }
 
         task add_poster_schedule_to_website "Add poster schedule on the website" {
           allocate webmaster
           depends !notify_webmaster_poster_schedule
           effort 4h
+          complete 100
+          journalentry 2020-08-12 "Not needed" {
+            author webmaster
+            summary "Moved to Sched, not needed"
+          }
         }
 
         task programme_book "Programme book" {
@@ -1074,18 +1099,33 @@ task OCNS2020 "OCNS 2020" {
             allocate vp_secretary, publication_chair, programme_chair
             depends !!send_programme_to_vp
             duration 2w
+            complete 100
+            journalentry 2020-08-12 "Not needed" {
+              author webmaster
+              summary "No travelling this year."
+            }
           }
 
           task send_to_webmaster "Send to webmaster" {
             allocate vp_secretary
             depends !prepare_book
             effort 1h
+            complete 100
+            journalentry 2020-08-12 "Not needed" {
+              author webmaster
+              summary "No travelling this year."
+            }
           }
 
           task publish_programme_book "Publish" {
             allocate webmaster
             effort 1h
             depends !send_to_webmaster
+            complete 100
+            journalentry 2020-08-12 "Not needed" {
+              author webmaster
+              summary "No travelling this year."
+            }
           }
         }
       }
