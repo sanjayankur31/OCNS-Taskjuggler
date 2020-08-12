@@ -1512,6 +1512,11 @@ task OCNS2020 "OCNS 2020" {
           depends !poster_submissions
           /* The scripts are OK, but tweaking the HTML takes time */
           effort 6h
+          complete 100
+          journalentry 2020-08-12 "Not needed" {
+            author webmaster
+            summary "No travelling this year."
+          }
         }
       }
     }
