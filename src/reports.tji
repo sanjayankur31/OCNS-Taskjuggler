@@ -6,7 +6,7 @@ navigator navbar {
 /* Default report that includes all the reports in it */
 textreport frame "" {
   header -8<-
-  == OCNS 2019-2020 ==
+  == OCNS 2020-2021 ==
   <[navigator id="navbar"]>
   ->8-
   footer "----"
@@ -73,7 +73,7 @@ textreport frame "" {
 
 taskreport overview "" {
   header -8<-
-  An ical of the whole plan is available [CNS2020.ics here]. Taskjuggler sources are [https://github.com/sanjayankur31/2020-CNS-Taskjuggler here].
+  An ical of the whole plan is available [CNS2021.ics here]. Taskjuggler sources are [https://github.com/sanjayankur31/2021-CNS-Taskjuggler here].
   ->8-
   columns bsi {title 'WBS'}, name, start, end, duration, complete
   loadunit days
@@ -169,7 +169,7 @@ taskreport tutorials "" {
   scenarios actual
 }
 
-icalreport calendar "CNS2020" {
+icalreport calendar "CNS2021" {
   scenario actual
 }
 

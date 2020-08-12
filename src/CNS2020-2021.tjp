@@ -17,12 +17,12 @@ Notes and statusnotes
 - add: statusnote "..."
 
 Journal entries to record events
-- add: journalentry 2019-10-10 "..."
+- add: journalentry 2020-10-10 "..."
  */
 
 /* Project header */
-project OCNS2020 "OCNS2020" "0.2"
-2019-08-01-0:00-+0100 - 2020-10-31-0:00-+0100
+project OCNS_2020_2021 "OCNS 2020-2021" "0.2"
+2020-08-01-0:00-+0100 - 2021-10-31-0:00-+0100
 {
   timezone "Europe/London"
 
@@ -39,11 +39,11 @@ project OCNS2020 "OCNS2020" "0.2"
 }
 
 /* Holidays/vacations */
-leaves holiday "christmas" 2019-12-20 - 2020-01-05
+leaves holiday "christmas" 2020-12-20 - 2021-01-05
 
 /* Macros */
-macro conference_start_date [ 2020-07-18 ]
-macro conference_end_date [ 2020-07-22 ]
+macro conference_start_date [ 2021-07-03 ]
+macro conference_end_date [ 2021-07-07 ]
 macro common_cap [
   caption '2 hours/day, 8/week. Excludes weekends. Durations cover all days, not only working days.'
 
@@ -92,7 +92,7 @@ resource board "OCNS Board" {
   /* Webmaster */
   resource webmaster "Webmaster"{
   limits { dailymax 2h weeklymax 8h }
-  leaves holiday "christmas" 2019-12-20 - 2020-01-15
+  leaves holiday "christmas" 2020-12-20 - 2021-01-15
   }
 
   /* Travel award chair */
@@ -192,42 +192,29 @@ resource nomination_committee "Nomination committee" {
 
 /* Tasks */
 /* Project Start */
-task OCNS2020 "OCNS 2020" {
-  start 2019-08-01
+task OCNS2021 "OCNS 2020-2021" {
+  start 2020-08-01
 
   /* Director elections */
   task director_elections "Director elections" {
     flags elections
-    start 2019-08-25
+    start 2020-08-25
 
     /* A minimum of three people are required on the committee */
     task create_nomination_committee "Create Nomination Committee" {
       allocate president
       effort 6h
-      complete 100
     }
 
     task update_elist "Update the e-list with new members of nomination committee" {
       allocate webmaster
       effort 1h
-      complete 100
 
-      journalentry 2019-09-04 "Done" {
-        author webmaster
-        summary "Created, e-mail sent to inform nomination committee"
-      }
     }
 
     task prepare_form "Copy over and open candidancy form" {
       allocate webmaster
       effort 2h
-      complete 100
-      journalentry 2019-09-02 "Created" {
-        author webmaster
-      }
-      journalentry 2019-09-04 "Sent to committee" {
-        author webmaster
-      }
     }
 
     /* https://www.cnsorg.org/election-procedures */
@@ -235,15 +222,10 @@ task OCNS2020 "OCNS 2020" {
       allocate webmaster
       effort 2h
       depends !prepare_form, !update_elist
-      journalentry 2019-09-19 "Completed" {
-        author webmaster
-      }
-      actual:start 2019-09-19
     }
 
     task call "Call for candidate directors" {
       allocate vp_secretary
-      actual:start 2019-09-19
       effort 2h
     }
 
@@ -282,9 +264,6 @@ task OCNS2020 "OCNS 2020" {
       allocate webmaster
       effort 6h
       depends !vet_candidates
-      journalentry 2019-11-04 "Created" {
-        author webmaster
-      }
     }
 
     task check_candidate_pages "Check that candidate pages are ready" {
@@ -309,18 +288,12 @@ task OCNS2020 "OCNS 2020" {
       depends !setup_director_candidate_pages
       allocate webmaster
       effort 4h
-      journalentry 2019-11-04 "Created" {
-        author webmaster
-      }
     }
 
     task open_voting_form "Open voting form" {
       depends !prepare_voting_form
       allocate webmaster
       effort 1h
-      journalentry 2019-11-04 "Created" {
-        author webmaster
-      }
     }
 
     task voting_call "Send out call for voting" {
@@ -434,11 +407,31 @@ task OCNS2020 "OCNS 2020" {
   /* Conference tasks */
   task conference_tasks "Conference tasks"
   {
-    start 2019-09-01
+    start 2020-09-01
 
 
     /* Before the conference */
     task pre_conference "Pre-conference" {
+
+      task programme_committee "Programme committee" {
+        task select_new_committee "Select programme committee" {
+          allocate programme_chair
+          duration 4w
+        }
+
+        task notify_webmaster_mail_group "Notify webmaster to create new mailing group" {
+          depends !select_new_committee
+          allocate programme_chair
+          effort 1h
+        }
+
+        task create_new_mail_group "Create new mailing group" {
+          allocate webmaster
+          effort 2h
+          depends !notify_webmaster_mail_group
+        }
+      }
+
 
       /* G-suite */
       task g_suite "Google suite" {
@@ -446,34 +439,26 @@ task OCNS2020 "OCNS 2020" {
 
         /* Check everyone has credentials */
         task credentials_check "Check required credentials and email groups" {
-          depends OCNS2020.director_elections
+          depends OCNS2021.director_elections
 
           task local_team "Local organisation team" {
             effort 1h
-            complete 100
-            journalentry 2019-09-04 "Sent to LOC lead" {
-              author webmaster
-            }
           }
 
           task program_chair "Program chair" {
             effort 1h
-            complete 100
           }
 
           task workshop_chair "Workshop chair" {
             effort 1h
-            complete 100
           }
 
           task tutorial_chair "Tutorial chair" {
             effort 1h
-            complete 100
           }
 
           task member_approval_chair "Member approval chair" {
             effort 1h
-            complete 100
           }
         }
 
@@ -482,28 +467,23 @@ task OCNS2020 "OCNS 2020" {
           depends !credentials_check
 
           task program_committee "Program committee" {
-            complete 100
             effort 1h
           }
 
           task workshops "Workshop organisers" {
-            complete 100
             effort 1h
           }
 
           task tutorial "Tutorial organisers" {
-            complete 100
             effort 1h
           }
 
           task member_approval "Member approval chairs" {
-            complete 100
             effort 1h
           }
 
           task local_team "Local organisation team" {
             effort 1h
-            complete 100
           }
         }
       }
@@ -516,53 +496,31 @@ task OCNS2020 "OCNS 2020" {
         /* Some of these depend on elections, so add deps there manually */
         /* Check everyone has credentials */
         task credentials_check "Check that everyone has required credentials" {
-          start 2020-01-01
+          start 2021-01-01
 
           task local "Local organisers" {
             effort 1h
-            complete 100
-            actual:start 2019-09-04
-            journalentry 2019-09-04 "Sent" {
-              author webmaster
-            }
           }
 
           task treasurer "Treasurer" {
             effort 1h
-            complete 100
-            actual:start 2019-09-02
-            journalentry 2019-09-03 "Checked" {
-              author webmaster
-            }
           }
 
 
           task workshop_chair "Workshop chair" {
             effort 1h
-            actual:start 2019-09-19
-            complete 100
-            journalentry 2019-09-19 "Done" {
-              author webmaster
-            }
           }
 
           task tutorial_chair "Tutorial chair" {
             effort 1h
-            actual:start 2019-09-19
-            complete 100
-            journalentry 2019-09-19 "Done" {
-              author webmaster
-            }
           }
 
           task member_approval "Member approval chair" {
             effort 1h
-            complete 100
           }
 
           task registration_chair "Registration chair" {
             effort 1h
-            complete 100
           }
         }
 
@@ -575,15 +533,8 @@ task OCNS2020 "OCNS 2020" {
         /* Copy over web content */
         task webcontent "Web content" {
           depends !mailing_list_check
-          task copy_pages "Copy over all 2019 pages to 2020" {
+          task copy_pages "Copy over all 2020 pages to 2021" {
             effort 8h
-            complete 100
-            journalentry 2019-09-19 "Workshops and tutorial pages done" {
-              author webmaster
-            }
-            journalentry 2019-10-16 "All pages copied, commented, and ready" {
-              author webmaster
-            }
           }
 
           /* Also remove permissions from old pages: archived */
@@ -601,33 +552,18 @@ task OCNS2020 "OCNS 2020" {
           task update_board_page "Update Board page and archive old ones" {
             effort 1h
             depends !copy_pages
-            complete 100
           }
 
           /* https://ocns.memberclicks.net/committees */
           task update_committees_page "Update committees page and archive old one" {
             effort 1h
             depends !copy_pages
-            complete 100
           }
 
           /* https://ocns.memberclicks.net/program-committee */
           task update_programme_committee_page "Update Programme committee page and archive old one" {
             effort 1h
             depends !copy_pages
-            complete 100
-            journalentry 2019-10-16 "E-mailed for updates" {
-              author webmaster
-              summary "E-mailed all members for links and pictures. Updating as they come in."
-            }
-            journalentry 2019-09-04 "Waiting" {
-              author webmaster
-              summary "Still waiting on some members to send their pictures"
-            }
-            journalentry 2020-08-12 "Was completed" {
-              author webmaster
-              summary "Was completed last year"
-            }
           }
         }
 
@@ -640,14 +576,12 @@ task OCNS2020 "OCNS 2020" {
             /* Check that membership form is up to date */
             task check_form "Check membership form" {
               effort 1h
-              complete 100
             }
 
             /* Check and update if needed */
             task check_pricing "Check membership rates" {
               depends !check_form
               effort 2h
-              complete 100
             }
           }
 
@@ -658,7 +592,7 @@ task OCNS2020 "OCNS 2020" {
             /* Remember to set it to close at end of conference */
             task copy_over "Copy over form" {
               depends !!membership_form.check_pricing
-              start 2019-12-01
+              start 2020-12-01
               effort 1h
             }
 
@@ -667,20 +601,17 @@ task OCNS2020 "OCNS 2020" {
             task redo_basic_contacts "Re-do basic contact prices" {
               effort 2h
               depends !copy_over
-              complete 100
             }
 
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
               effort 2h
               depends !copy_over
-              complete 100
             }
 
             task open_form "Open the form" {
               effort 0.5h
               depends !check_pricing
-              complete 100
             }
           }
 
@@ -688,7 +619,7 @@ task OCNS2020 "OCNS 2020" {
           task add_to_registration_form "Add to registration form" {
             /* Copy over registration form */
             task copy_over "Copy over form" {
-              start 2019-12-01
+              start 2020-12-01
               effort 1h
             }
             /* Set up pricing */
@@ -699,7 +630,6 @@ task OCNS2020 "OCNS 2020" {
             task redo_basic_contacts "Re-do basic contact prices" {
               effort 2h
               depends !copy_over
-              complete 100
             }
 
             task open_form "Open the form" {
@@ -712,25 +642,21 @@ task OCNS2020 "OCNS 2020" {
           task add_extras_form "Add extras form" {
             /* Copy over registration form */
             task copy_over "Copy over form" {
-              start 2019-12-01
+              start 2020-12-01
               effort 1h
-              complete 100
             }
             /* Set up pricing */
             task check_pricing "Set up date based pricing" {
               effort 2h
               depends !copy_over
-              complete 100
             }
             task redo_basic_contacts "Re-do basic contact prices" {
               effort 2h
               depends !copy_over
-              complete 100
             }
             task open_form "Open the form" {
               effort 0.5h
               depends !check_pricing
-              complete 100
             }
           }
 
@@ -755,7 +681,6 @@ task OCNS2020 "OCNS 2020" {
             /* Send codes to respective Board members */
             task send_vouchers "Send voucher codes to respective Board members" {
               effort 4h
-              complete 100
               depends !create_vouchers
             }
           }
@@ -767,12 +692,7 @@ task OCNS2020 "OCNS 2020" {
             /* Check that membership form is up to date */
             task update_form "Update travel award form" {
               effort 4h
-              complete 100
 
-              journalentry 2020-08-12 "Not needed" {
-                author webmaster
-                summary "No travelling this year."
-              }
             }
           }
         }
@@ -780,35 +700,27 @@ task OCNS2020 "OCNS 2020" {
         /* Update all the links */
         task update_links "Update site links on main CNS page and the main menu" {
           effort 4h
-          complete 100
           depends !webcontent, !forms
-          journalentry 2019-11-04 "Complete" {
-            author webmaster
-            summary "Was completed some time ago"
-          }
         }
 
         /* Membership tasks */
-        /* Bump expiry dates for inactive accounts to 31st Dec 2019 so that if they renew, the expiry is set correctly */
+        /* Bump expiry dates for inactive accounts to 31st Dec 2020 so that if they renew, the expiry is set correctly */
         task update_expiration "Update expiration dates of inactive accounts" {
-          start 2019-12-01
+          start 2020-12-01
           effort 10h
           priority 800
-          complete 100
         }
 
         task update_welcome_letter_template "Update welcome letter template" {
-          start 2020-01-01
+          start 2021-01-01
           effort 2h
           priority 800
-          complete 100
         }
 
         task update_approval_letter_template "Update approval letter template" {
-          start 2020-01-01
+          start 2021-01-01
           effort 2h
           priority 800
-          complete 100
         }
       }
 
@@ -817,12 +729,7 @@ task OCNS2020 "OCNS 2020" {
         effort 3h
         allocate webmaster
         priority 100
-        complete 100
 
-        journalentry 2020-08-12 "Not needed" {
-          author webmaster
-          summary "On Sched this year."
-        }
       }
 
       /* Confmaster */
@@ -831,34 +738,31 @@ task OCNS2020 "OCNS 2020" {
 
         task prepare_confmaster "Prepare confmaster" {
           duration 6w
-          actual: complete 100
-          actual: duration 10w
         }
 
         task confmaster_freeze "Freeze confmaster deployment" {
           depends !prepare_confmaster
           duration 1w
-          complete 100
         }
       }
 
       /* Key notes */
       task get_keynote_speakers "Identify and invite key note speakers" {
         allocate programme_chair
-        end 2020-06-01
+        end 2021-06-01
       }
 
 
       /* Programm committee */
       task call_for_programmee_committee_volunteers "Call for programme committee volunteers for next year" {
         allocate programme_chair
-        start 2020-06-28
+        start 2021-06-28
         effort 1h
       }
 
       task invite_new_reviewers "Invite and confirm new reviewers" {
         allocate programme_chair
-        depends OCNS2020.conference_tasks.pre_conference.confmaster.confmaster_freeze {
+        depends OCNS2021.conference_tasks.pre_conference.confmaster.confmaster_freeze {
           onend
         }
         effort 20h
@@ -871,12 +775,12 @@ task OCNS2020 "OCNS 2020" {
 
       task check_board_is_registered "Check all directors are registered" {
         allocate president
-        start 2020-04-01
+        start 2021-04-01
         duration 4w
       }
 
       task create_and_send_out_meeting_agendas "Create and send out agenda for Board and Member's meetings" {
-        start 2020-06-01
+        start 2021-06-01
         allocate president
         duration 4w
       }
@@ -890,7 +794,7 @@ task OCNS2020 "OCNS 2020" {
       /* Lots of tasks here */
       task newsletter "Prepare newsletter" {
         allocate newsletter_chair
-        start 2019-08-01
+        start 2020-08-01
         duration 6m
       }
 
@@ -899,8 +803,7 @@ task OCNS2020 "OCNS 2020" {
         depends !newsletter
         allocate webmaster
         effort 1h
-        start 2020-02-10
-        complete 100
+        start 2021-02-10
       }
 
       task send_newsletter "Send newsletter to members" {
@@ -910,16 +813,15 @@ task OCNS2020 "OCNS 2020" {
       }
     }
 
-    task conference "CNS*2020" {
+    task conference "CNS*2021" {
 
       /* Registration */
       task registration "Registrations" {
-        depends OCNS2020.conference_tasks.pre_conference.memberclicks.forms.registration_form
+        depends OCNS2021.conference_tasks.pre_conference.memberclicks.forms.registration_form
         flags conference_calendar
 
         task open "Registrations open" {
           milestone
-          actual:start 2020-01-08
         }
 
         task call "Call for registrations" {
@@ -929,22 +831,22 @@ task OCNS2020 "OCNS 2020" {
         }
 
         task early_registration_non_members "Early registration closes for non members" {
-          start 2020-05-06
+          start 2021-05-06
           milestone
         }
 
         task early_registration_members "Early registration closes for members" {
-          start 2020-05-15
+          start 2021-05-15
           milestone
         }
 
         task latest_safe_abstract "Latest safe date for membership before abstract submission ends" {
-          start 2020-02-27
+          start 2021-02-27
           milestone
         }
 
         task latest_safe_members "Latest safe date for membership applications before early registration for members ends" {
-          start 2020-05-08
+          start 2021-05-08
           milestone
         }
       }
@@ -952,34 +854,33 @@ task OCNS2020 "OCNS 2020" {
       /* Travel awards */
       task travel_awards "Travel award applications" {
         task submission_deadline "Submission deadline" {
-          end 2020-04-04
+          end 2021-04-04
           duration 1d
           flags conference_calendar
         }
 
         task notifications "Travel award notifications" {
           milestone
-          start 2020-05-07
+          start 2021-05-07
           flags conference_calendar
         }
       }
 
       /* Abstract submission */
       task abstracts "Abstract submissions" {
-        depends OCNS2020.conference_tasks.pre_conference.memberclicks.forms.registration_form
+        depends OCNS2021.conference_tasks.pre_conference.memberclicks.forms.registration_form
 
         /* Open confmaster for submissions */
         task confmaster_open "Open Confmaster for submissions" {
           allocate programme_chair
-          depends OCNS2020.conference_tasks.pre_conference.confmaster.confmaster_freeze
+          depends OCNS2021.conference_tasks.pre_conference.confmaster.confmaster_freeze
           effort 2h
-          maxstart 2020-01-01
+          maxstart 2021-01-01
         }
 
         task open "Abstract submissions open" {
           depends !confmaster_open
           milestone
-          actual:start 2020-01-09
           flags conference_calendar
         }
 
@@ -987,22 +888,20 @@ task OCNS2020 "OCNS 2020" {
         task call "Call for submissions" {
           depends !open
           allocate vp_secretary
-          maxstart 2020-01-10
+          maxstart 2021-01-10
           effort 1h
           flags conference_calendar
         }
 
         task submissions "Abstract submissions period" {
           depends !open
-          end 2020-03-04
-          actual:end 2020-03-04
+          end 2021-03-04
           flags conference_calendar
         }
 
         task submissions_extended "Abstract submissions extension period" {
           depends !submissions
-          end 2020-03-11
-          actual:end 2020-03-11
+          end 2021-03-11
           flags conference_calendar
         }
 
@@ -1027,7 +926,7 @@ task OCNS2020 "OCNS 2020" {
 
         task acceptance_notification "Notification of abstract acceptance" {
           depends !review_period
-          start 2020-04-10
+          start 2021-04-10
           effort 1d
           allocate programme_chair
           flags conference_calendar
@@ -1043,7 +942,7 @@ task OCNS2020 "OCNS 2020" {
 
         task type_notification "Notification of Oral/Poster presentation" {
           depends !type_assessment
-          start 2020-05-01
+          start 2021-05-01
           effort 1d
           allocate programme_chair
           flags conference_calendar
@@ -1076,22 +975,12 @@ task OCNS2020 "OCNS 2020" {
           allocate programme_chair
           depends !prepare_conference_programme
           effort 1h
-          complete 100
-          journalentry 2020-08-12 "Not needed" {
-            author webmaster
-            summary "No travelling this year."
-          }
         }
 
         task add_poster_schedule_to_website "Add poster schedule on the website" {
           allocate webmaster
           depends !notify_webmaster_poster_schedule
           effort 4h
-          complete 100
-          journalentry 2020-08-12 "Not needed" {
-            author webmaster
-            summary "Moved to Sched, not needed"
-          }
         }
 
         task programme_book "Programme book" {
@@ -1099,40 +988,25 @@ task OCNS2020 "OCNS 2020" {
             allocate vp_secretary, publication_chair, programme_chair
             depends !!send_programme_to_vp
             duration 2w
-            complete 100
-            journalentry 2020-08-12 "Not needed" {
-              author webmaster
-              summary "No travelling this year."
-            }
           }
 
           task send_to_webmaster "Send to webmaster" {
             allocate vp_secretary
             depends !prepare_book
             effort 1h
-            complete 100
-            journalentry 2020-08-12 "Not needed" {
-              author webmaster
-              summary "No travelling this year."
-            }
           }
 
           task publish_programme_book "Publish" {
             allocate webmaster
             effort 1h
             depends !send_to_webmaster
-            complete 100
-            journalentry 2020-08-12 "Not needed" {
-              author webmaster
-              summary "No travelling this year."
-            }
           }
         }
       }
 
       /* Tutorials */
       task tutorials "Tutorials" {
-        start 2019-12-15
+        start 2020-12-15
 
         task call "Call for submissions" {
           allocate tutorials_chair
@@ -1143,7 +1017,7 @@ task OCNS2020 "OCNS 2020" {
         task submissions "Submission period" {
           depends !call
           flags conference_calendar
-          end 2020-01-31
+          end 2021-01-31
         }
 
         task review "Review tutorial proposals" {
@@ -1157,7 +1031,7 @@ task OCNS2020 "OCNS 2020" {
           flags conference_calendar
           depends !review
           effort 4h
-          /* Feb 21 in 2019 */
+          /* Feb 21 in 2020 */
         }
 
         task notify_schedule "Send out tutorial day schedule to organisers" {
@@ -1225,18 +1099,18 @@ task OCNS2020 "OCNS 2020" {
         task programmme_book_info "Ask organisers to send in info for programme book" {
           allocate tutorials_chair
           effort 1h
-          depends OCNS2020.conference_tasks.conference.abstracts.send_programme_to_vp
+          depends OCNS2021.conference_tasks.conference.abstracts.send_programme_to_vp
         }
       }
 
       /* Workshops */
       task workshops "Workshops" {
-        start 2019-12-15
+        start 2020-12-15
 
         task call "Call for submissions" {
           allocate workshops_chair
           flags conference_calendar
-          /* 17 Dec in 2019 */
+          /* 17 Dec in 2020 */
           effort 0.5d
         }
 
@@ -1258,7 +1132,7 @@ task OCNS2020 "OCNS 2020" {
           flags conference_calendar
           depends !review
           effort 4h
-          /* Feb 21 in 2019 */
+          /* Feb 21 in 2020 */
         }
 
         task send_vouchers "Send out vouchers to organisers" {
@@ -1266,7 +1140,6 @@ task OCNS2020 "OCNS 2020" {
           depends !acceptance
           /* Feb 22 */
           effort 2h
-          complete 100
         }
 
         task notify_schedule "Send out workshop day schedule to organisers" {
@@ -1320,7 +1193,7 @@ task OCNS2020 "OCNS 2020" {
         task programmme_book_info "Ask organisers to send in info for programme book" {
           allocate workshops_chair
           effort 1h
-          depends OCNS2020.conference_tasks.conference.abstracts.send_programme_to_vp
+          depends OCNS2021.conference_tasks.conference.abstracts.send_programme_to_vp
           /* May 23 */
         }
 
@@ -1449,26 +1322,6 @@ task OCNS2020 "OCNS 2020" {
     task post_conference "Post-conference" {
       start ${conference_end_date}
 
-      task programme_committee "Programme committee" {
-        task select_new_committee "Select programme committee for next year" {
-          depends OCNS2020.conference_tasks.conference.melbourne
-          allocate programme_chair
-          duration 4w
-        }
-
-        task notify_webmaster_mail_group "Notify webmaster to create new mailing group" {
-          depends !select_new_committee
-          allocate programme_chair
-          effort 1h
-        }
-
-        task create_new_mail_group "Create new mailing group" {
-          allocate webmaster
-          effort 2h
-          depends !notify_webmaster_mail_group
-        }
-      }
-
       /* Conference survey */
       task conference_survey "Conference survey" {
 
@@ -1483,7 +1336,7 @@ task OCNS2020 "OCNS 2020" {
         /* Submission period */
         task survey_submissions "Survey submission period" {
           depends !call
-          end 2020-09-07
+          end 2021-09-07
           flags conference_calendar
         }
       }
@@ -1503,7 +1356,7 @@ task OCNS2020 "OCNS 2020" {
         task poster_submissions "Poster submission period" {
           flags conference_calendar
           depends !call
-          end 2020-09-07
+          end 2021-09-07
         }
 
         /* Set up gallery */
@@ -1512,11 +1365,6 @@ task OCNS2020 "OCNS 2020" {
           depends !poster_submissions
           /* The scripts are OK, but tweaking the HTML takes time */
           effort 6h
-          complete 100
-          journalentry 2020-08-12 "Not needed" {
-            author webmaster
-            summary "No travelling this year."
-          }
         }
       }
     }
