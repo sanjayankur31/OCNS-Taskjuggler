@@ -203,7 +203,7 @@ task OCNS2021 "OCNS 2020-2021" {
     /* A minimum of three people are required on the committee */
     task create_nomination_committee "Create Nomination Committee" {
       allocate president
-      effort 6h
+      effort 1h
     }
 
     task update_elist "Update the e-list with new members of nomination committee" {
@@ -338,7 +338,7 @@ task OCNS2021 "OCNS 2020-2021" {
     task send_form_results_to_president "Send voting form results to President" {
       allocate webmaster
       depends !close_voting_form
-      effort 2h
+      effort 1h
     }
 
     task analyse_votes "Analyse votes and select winners" {
@@ -746,6 +746,29 @@ task OCNS2021 "OCNS 2020-2021" {
         }
       }
 
+      /* Sched */
+      task sched "Sched" {
+
+        task get_sched_subscription "Get a non-profit Sched subscription" {
+          effort 1h
+          allocate webmaster
+          priority 500
+        }
+
+        task give_programme_chair_access "Give programme chair access to Sched" {
+          effort 0.5h
+          allocate webmaster
+          depends !get_sched_subscription
+        }
+
+        task give_local_organisers_access "Give LOC access to Sched" {
+          effort 0.5h
+          allocate webmaster
+          depends !give_programme_chair_access
+        }
+
+      }
+
       /* Key notes */
       task get_keynote_speakers "Identify and invite key note speakers" {
         allocate programme_chair
@@ -959,7 +982,7 @@ task OCNS2021 "OCNS 2020-2021" {
           effort 1h
         }
 
-        task prepare_conference_programme "Prepare conference programme" {
+        task prepare_conference_programme "Prepare conference programme and upload to Sched" {
           depends !type_notification
           allocate programme_chair
           duration 4w
@@ -969,38 +992,6 @@ task OCNS2021 "OCNS 2020-2021" {
           depends !send_programme_to_vp
           effort 6h
           allocate programme_chair
-        }
-
-        task notify_webmaster_poster_schedule "Send poster schedule to webmaster" {
-          allocate programme_chair
-          depends !prepare_conference_programme
-          effort 1h
-        }
-
-        task add_poster_schedule_to_website "Add poster schedule on the website" {
-          allocate webmaster
-          depends !notify_webmaster_poster_schedule
-          effort 4h
-        }
-
-        task programme_book "Programme book" {
-          task prepare_book "Prepare programme book" {
-            allocate vp_secretary, publication_chair, programme_chair
-            depends !!send_programme_to_vp
-            duration 2w
-          }
-
-          task send_to_webmaster "Send to webmaster" {
-            allocate vp_secretary
-            depends !prepare_book
-            effort 1h
-          }
-
-          task publish_programme_book "Publish" {
-            allocate webmaster
-            effort 1h
-            depends !send_to_webmaster
-          }
         }
       }
 
@@ -1041,13 +1032,13 @@ task OCNS2021 "OCNS 2020-2021" {
           /* May 01 */
         }
 
-        task put_list_on_website "Put tutorial list on website" {
+        task put_list_on_website "Put tutorial list on sched" {
           depends !acceptance
           allocate tutorials_chair
           effort 12h
         }
 
-        task notify_on_web "Notify organisers of list being posted on website" {
+        task notify_on_web "Notify organisers of list being posted on Sched" {
           depends !put_list_on_website
           allocate tutorials_chair
           effort 0.5h
@@ -1135,6 +1126,12 @@ task OCNS2021 "OCNS 2020-2021" {
           /* Feb 21 in 2020 */
         }
 
+        task give_organisers_sched_access "Give workshop organisers admin access to Sched" {
+          allocate webmaster
+          depends !acceptance
+          effort 2h
+        }
+
         task send_vouchers "Send out vouchers to organisers" {
           allocate workshops_chair
           depends !acceptance
@@ -1149,13 +1146,13 @@ task OCNS2021 "OCNS 2020-2021" {
           /* May 01 */
         }
 
-        task put_list_on_website "Put workshop list on website" {
+        task put_list_on_website "Put workshop list on Sched" {
           depends !acceptance
           allocate workshops_chair
           effort 12h
         }
 
-        task notify_on_web "Notify organisers of list being posted on website" {
+        task notify_on_web "Notify organisers of list being posted on Sched" {
           depends !put_list_on_website
           allocate workshops_chair
           effort 0.5h
@@ -1271,7 +1268,7 @@ task OCNS2021 "OCNS 2020-2021" {
 
 
       /* Conference */
-      task melbourne "Conference: Melbourne" {
+      task melbourne "Conference: Leipzig" {
         start ${conference_start_date}
 
         /* Conference events */
@@ -1338,33 +1335,6 @@ task OCNS2021 "OCNS 2020-2021" {
           depends !call
           end 2021-09-07
           flags conference_calendar
-        }
-      }
-
-      /* Poster submissions */
-      task poster_gallery "Poster gallery" {
-
-        /* Call for submissions */
-        task call "Call for submissions" {
-          start ${conference_end_date}
-          allocate vp_secretary
-          effort 0.5d
-          flags conference_calendar
-        }
-
-        /* Submission period */
-        task poster_submissions "Poster submission period" {
-          flags conference_calendar
-          depends !call
-          end 2021-09-07
-        }
-
-        /* Set up gallery */
-        task poster_gallery_setup "Process submissions" {
-          allocate webmaster
-          depends !poster_submissions
-          /* The scripts are OK, but tweaking the HTML takes time */
-          effort 6h
         }
       }
     }
