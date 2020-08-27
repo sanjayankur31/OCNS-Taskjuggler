@@ -204,17 +204,19 @@ task OCNS2021 "OCNS 2020-2021" {
     task create_nomination_committee "Create Nomination Committee" {
       allocate president
       effort 1h
+      complete 100
     }
 
     task update_elist "Update the e-list with new members of nomination committee" {
       allocate webmaster
       effort 1h
-
+      complete 0
     }
 
     task prepare_form "Copy over and open candidancy form" {
       allocate webmaster
       effort 2h
+      complete 0
     }
 
     /* https://www.cnsorg.org/election-procedures */
@@ -222,17 +224,20 @@ task OCNS2021 "OCNS 2020-2021" {
       allocate webmaster
       effort 2h
       depends !prepare_form, !update_elist
+      complete 0
     }
 
     task call "Call for candidate directors" {
       allocate vp_secretary
       effort 2h
+      complete 0
     }
 
     task call_check "Check that call for director candidates went out" {
       allocate president
       effort 1h
       depends !call
+      complete 0
     }
 
     task reminder "Reminder call for candidate directors" {
@@ -246,6 +251,7 @@ task OCNS2021 "OCNS 2020-2021" {
     task nomination_period "Nomination period" {
       depends !call
       duration 1m
+      complete 0
     }
 
     task send_candidates_for_checks "Send candidates to Nomination Committee" {
@@ -1268,7 +1274,7 @@ task OCNS2021 "OCNS 2020-2021" {
 
 
       /* Conference */
-      task melbourne "Conference: Leipzig" {
+      task Leigpiz "Conference: Leipzig" {
         start ${conference_start_date}
 
         /* Conference events */
