@@ -231,6 +231,7 @@ task OCNS2021 "OCNS 2020-2021" {
       allocate vp_secretary
       effort 2h
       complete 0
+      start 2020-09-20
     }
 
     task call_check "Check that call for director candidates went out" {
@@ -268,8 +269,8 @@ task OCNS2021 "OCNS 2020-2021" {
 
     task setup_director_candidate_pages "Set up director candidate pages" {
       allocate webmaster
-      effort 6h
-      depends !vet_candidates
+      effort 3h
+      depends !send_candidates_for_checks
     }
 
     task check_candidate_pages "Check that candidate pages are ready" {
@@ -350,7 +351,7 @@ task OCNS2021 "OCNS 2020-2021" {
     task analyse_votes "Analyse votes and select winners" {
       allocate president
       depends !send_form_results_to_president
-      effort 10h
+      effort 2h
     }
 
     /* Only nomination committee sees detailed results. Everyone else only sees winners */
@@ -363,7 +364,7 @@ task OCNS2021 "OCNS 2020-2021" {
 
     task verify_results "Verify results" {
       allocate nomination_committee
-      effort 10h
+      effort 2h
       depends !send_results
     }
 
@@ -381,7 +382,7 @@ task OCNS2021 "OCNS 2020-2021" {
     task allocate_roles "Allocate roles to new directors" {
       allocate president
       depends !contact_winners, !contact_non_winners
-      effort 12h
+      effort 3h
     }
 
     /* Delete so that all votes are deleted */
@@ -393,7 +394,7 @@ task OCNS2021 "OCNS 2020-2021" {
 
     task announce_results_web "Add results on home and landing web pages" {
       allocate webmaster
-      effort 8h
+      effort 4h
       depends !allocate_roles
     }
 
