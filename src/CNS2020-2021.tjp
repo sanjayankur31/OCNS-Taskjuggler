@@ -198,7 +198,7 @@ task OCNS2021 "OCNS 2020-2021" {
   /* Director elections */
   task director_elections "Director elections" {
     flags elections
-    start 2020-08-25
+    start 2020-09-04
 
     /* A minimum of three people are required on the committee */
     task create_nomination_committee "Create Nomination Committee" {
