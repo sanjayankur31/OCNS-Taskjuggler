@@ -971,15 +971,8 @@ task OCNS2021 "OCNS 2020-2021" {
           priority 800
         }
 
-        task type_assessment "Assign abstracts Oral/Poster presentations" {
-          depends !acceptance_notification
-          duration 2w
-          allocate programme_committee, programme_chair
-        }
-
-
         task type_notification "Notification of Oral/Poster presentation" {
-          depends !type_assessment
+          depends !acceptance_notification
           start 2021-05-01
           effort 1d
           allocate programme_chair
@@ -987,8 +980,8 @@ task OCNS2021 "OCNS 2020-2021" {
         }
 
         task prepare_publication_materials "Prepare publication materials" {
-          depends !type_assessment
-          allocate publication_chair, programme_chair
+          depends !review_period
+          allocate publication_chair
           duration 8w
         }
         task send_programme_to_vp "Send material to VP for programme book" {
