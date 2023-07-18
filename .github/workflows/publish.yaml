@@ -30,6 +30,7 @@ jobs:
         gem install taskjuggler
     - name: Publish
       run: |
+        mkdir docs
         tj3 ./src/CNS.tjp -o docs/
         ghp-import -m "Generate site" -b master docs -n -p -f
 
