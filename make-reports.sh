@@ -5,26 +5,10 @@
 # File : make-reports.sh
 #
 
-# Generate but store in a tmp directory
-rm -rf /tmp/tj3/ && mkdir /tmp/tj3/
-tj3 ./src/CNS.tjp -o /tmp/tj3/ || exit -1
-
-# Not the tags file
-rm -fv /tmp/tj3/tags
-
-# Switch to branch, copy over
-git checkout master || exit -1
-git pull origin master
-rm -rf docs && mkdir docs
-cp -vr /tmp/tj3/* ./docs/
+rm -rf docs/*
 
 # Create an index.html
+tj3 ./src/CNS.tjp -o docs/ || exit -1
 pushd docs
     ln -fvs ./"Overview - by tasks.html" ./index.html
 popd
-
-# commit
-git add .
-git commit -m "Regenerate" -S
-git push -u origin master
-git checkout source && mkdir docs
