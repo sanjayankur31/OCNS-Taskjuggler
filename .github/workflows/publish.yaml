@@ -32,5 +32,6 @@ jobs:
       run: |
         mkdir docs
         tj3 ./src/CNS.tjp -o docs/
+        pushd docs && ln -fvs ./"Overview - by tasks.html" ./index.html && popd
         ghp-import -m "Generate site" -b master docs -n -p -f
 
