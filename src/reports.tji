@@ -6,7 +6,7 @@ navigator navbar {
 /* Default report that includes all the reports in it */
 textreport frame "" {
   header -8<-
-  == OCNS 2020-2021 ==
+  == OCNS ==
   <[navigator id="navbar"]>
   ->8-
   footer "----"
