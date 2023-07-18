@@ -22,7 +22,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install ghp-import
     - name: Set up Ruby
-    - uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.0
     - name: Install taskjuggler
