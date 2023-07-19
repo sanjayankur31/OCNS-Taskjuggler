@@ -204,6 +204,8 @@ task OCNS "OCNS " {
     task create_nomination_committee "Create Nomination Committee" {
       allocate president
       effort 1h
+      /* mark completion of a leaf task */
+      complete 0
     }
 
     task update_elist "Update the e-list with new members of nomination committee" {
