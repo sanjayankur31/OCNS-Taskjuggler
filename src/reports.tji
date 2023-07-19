@@ -15,6 +15,10 @@ textreport frame "" {
     center '<[report id="overview"]>'
   }
 
+  textreport "Gantt chart" {
+    formats html
+    center '<[report id="chart"]>'
+  }
   textreport "Elections - by task" {
     formats html
     center '<[report id="elections"]>'
@@ -83,8 +87,8 @@ taskreport overview "" {
 }
 
 taskreport chart "" {
-  columns name, chart
-  loadunit days
+  columns name, chart {scale month}
+  loadunit shortauto
   timeformat "%a %Y-%m-%d"
   ${common_cap}
   scenarios actual
